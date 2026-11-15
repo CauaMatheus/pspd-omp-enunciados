@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Lab OMP — PSPD 2026.02</title>
+<meta name="description" content="Enunciados dos problemas A–E do lab de OpenMP de PSPD 2026.02 (UnB-FCTE).">
+<style>
+:root{
+  --blue:#2b6cb0; --blue-dark:#1c4e86; --blue-soft:#e8f0fb; --blue-bg:#f5f8fc;
+  --accent:#6d5cff; --ink:#19222e; --muted:#5b6b80; --line:#e1e8f2; --border:#d0d7de;
+  --ok:#2e7d32; --card:#ffffff; --radius:14px;
+  --shadow:0 1px 2px rgba(20,40,80,.04), 0 6px 20px rgba(20,40,80,.06);
+  --shadow-sm:0 1px 3px rgba(20,40,80,.07);
+  --mono:"JetBrains Mono","Fira Mono","DejaVu Sans Mono",Consolas,monospace;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0; color:var(--ink); line-height:1.6; font-size:16px;
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background:linear-gradient(180deg,#e9f0fa 0%,var(--blue-bg) 280px,var(--blue-bg)) no-repeat, var(--blue-bg);}
+a{color:var(--blue);}
+.wrap{max-width:900px; margin-inline:auto; padding-inline:16px;}
+.visually-hidden{position:absolute!important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+
+/* cabeçalho */
+.site-head{padding-block:2.4rem 1.2rem;}
+.kicker{color:var(--muted); font-size:.85rem; letter-spacing:.02em; margin:0;}
+.site-title{color:var(--blue-dark); font-size:clamp(1.6rem,4vw,2.2rem); line-height:1.15; margin:.25rem 0 .4rem; letter-spacing:-.01em;}
+.site-sub{color:var(--muted); margin:0;}
+
+/* barra de filtro */
+.filter-bar{position:sticky; top:0; z-index:10; padding:.7rem 0;
+  background:rgba(245,248,252,.86); backdrop-filter:saturate(1.4) blur(8px); -webkit-backdrop-filter:saturate(1.4) blur(8px);
+  border-bottom:1px solid transparent; transition:border-color .2s;}
+.filter-bar.stuck{border-bottom-color:var(--line);}
+.filter-row{display:flex; align-items:center; gap:.8rem; flex-wrap:wrap;}
+.filter{display:inline-flex; flex-wrap:wrap; gap:4px; padding:4px; margin:0; border:1px solid var(--line);
+  border-radius:12px; background:#fff; box-shadow:var(--shadow-sm);}
+.filter legend{padding:0;}
+.pill{position:relative; cursor:pointer;}
+.pill input{position:absolute; inset:0; opacity:0; margin:0; cursor:pointer;}
+.pill span{display:block; min-width:2.6rem; padding:.42rem .85rem; border-radius:9px; text-align:center;
+  font-weight:600; font-size:.95rem; color:var(--blue-dark); transition:background-color .15s,color .15s;}
+.pill:hover span{background:var(--blue-soft);}
+.pill input:checked + span{background:var(--blue-dark); color:#fff;}
+.pill input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px;}
+.filter-status{color:var(--muted); font-size:.9rem; margin:0;}
+
+/* problemas */
+main{padding-block:1rem 3rem; display:flex; flex-direction:column; gap:2rem;}
+.problem{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:1.6rem 1.8rem; scroll-margin-top:5rem;}
+.problem[hidden]{display:none;}
+.prob-letter{display:inline-flex; align-items:center; justify-content:center; min-width:1.55em; height:1.55em;
+  padding:0 .3em; margin-right:.45em; border-radius:.35em; background:var(--blue-dark); color:#fff;
+  font-size:.8em; font-weight:700; line-height:1; vertical-align:.12em;}
+
+/* conteúdo dos enunciados (adaptado do CSS do MOJ) */
+.statement-content{line-height:1.7; font-size:1.04rem; overflow-wrap:break-word;}
+.statement-content h1,.statement-content h2,.statement-content h3{color:var(--blue-dark); line-height:1.25; letter-spacing:-.01em;}
+.statement-content h1.moj-title{margin:.1rem 0 1rem; font-size:1.75rem;}
+.statement-content h2{margin:1.6rem 0 .5rem; font-size:1.3rem;}
+.statement-content code{font-family:var(--mono); color:var(--blue-dark); background:#eef3fb;
+  padding:.05em .35em; border-radius:5px; font-size:.92em;}
+.statement-content pre{font-family:var(--mono); background:#0d1626; color:#e2e8f0; margin:.3rem 0 .6rem;
+  border-radius:10px; padding:.9em 1.2em; overflow-x:auto; box-shadow:var(--shadow-sm); font-size:.9rem; line-height:1.55;}
+.statement-content pre code{background:none; color:inherit; padding:0;}
+.statement-content img{max-width:100%; border-radius:8px;}
+.statement-content ul,.statement-content ol{padding-left:1.5em;}
+.statement-content blockquote{border-left:3px solid var(--border); margin:.8em 0; padding:.1em .9em; color:var(--muted);}
+.statement-content table{border-collapse:collapse; margin:.7rem 0; display:block; max-width:100%; overflow-x:auto; width:max-content;}
+.statement-content th,.statement-content td{border:1px solid var(--border); padding:.25rem .55rem;}
+.statement-content math{font-size:1.05em;}
+.statement-content math[display="block"]{overflow-x:auto; overflow-y:hidden; max-width:100%;}
+.statement-content p:has(> math),.statement-content li:has(> math),.statement-content td:has(> math){overflow-x:auto; overflow-y:hidden; padding-bottom:2px;}
+.statement-content .moj-exemplo{border:1px solid var(--border); border-radius:10px; padding:.3rem .9rem .5rem; margin:.7rem 0;}
+.statement-content .moj-exemplo h3{margin:.6rem 0 .3rem; font-size:1rem;}
+.statement-content .moj-exemplo h3.sample-head{display:flex; align-items:center; justify-content:space-between; gap:.5rem;}
+.sample-copy{font:600 .78rem/1.4 inherit; font-family:inherit; padding:.2rem .75rem; border:1px solid var(--border);
+  border-radius:999px; background:#fff; color:var(--blue-dark); cursor:pointer; white-space:nowrap;
+  transition:background-color .15s,border-color .15s,color .15s;}
+.sample-copy:hover{background:#eef3fb;}
+.sample-copy:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.sample-copy.ok{border-color:var(--ok); color:var(--ok); background:#eef8ef;}
+.sample-copy.fail{border-color:#be1241; color:#be1241;}
+
+.site-foot{color:var(--muted); font-size:.85rem; padding-block:0 2.5rem; text-align:center;}
+
+@media (max-width:600px){
+  .site-head{padding-top:1.6rem;}
+  .problem{padding:1.1rem 1rem; border-radius:12px;}
+  .statement-content{font-size:1rem;}
+  .statement-content h1.moj-title{font-size:1.4rem;}
+  .pill span{min-width:2.3rem; padding:.4rem .65rem;}
+  .filter-status{flex-basis:100%;}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<header class="site-head wrap">
+  <p class="kicker">[UnB-FCTE] PSPD 2026.02 · Turma 01</p>
+  <h1 class="site-title">Lab OMP — Enunciados</h1>
+  <p class="site-sub">Problemas A–E de programação paralela com OpenMP.</p>
+</header>
+<div id="bar-sentinel" aria-hidden="true"></div>
+<div class="filter-bar">
+  <div class="wrap filter-row">
+    <fieldset class="filter">
+      <legend class="visually-hidden">Escolha o problema</legend>
+      <label class="pill"><input type="radio" name="filtro" value="todos" checked><span>Todos</span></label><label class="pill" title="A — Sudoku Paralelo"><input type="radio" name="filtro" value="A" aria-label="A — Sudoku Paralelo"><span>A</span></label><label class="pill" title="B — Multiplicação de Matrizes em Paralelo"><input type="radio" name="filtro" value="B" aria-label="B — Multiplicação de Matrizes em Paralelo"><span>B</span></label><label class="pill" title="C — Cálculo Paralelo de PI usando OpenMP"><input type="radio" name="filtro" value="C" aria-label="C — Cálculo Paralelo de PI usando OpenMP"><span>C</span></label><label class="pill" title="D — Parallel Prime Sum"><input type="radio" name="filtro" value="D" aria-label="D — Parallel Prime Sum"><span>D</span></label><label class="pill" title="E — Cálculo Paralelo de PI usando OpenMP e o método de Gregory-Leibniz"><input type="radio" name="filtro" value="E" aria-label="E — Cálculo Paralelo de PI usando OpenMP e o método de Gregory-Leibniz"><span>E</span></label>
+    </fieldset>
+    <p class="filter-status" id="filter-status" aria-live="polite"></p>
+  </div>
+</div>
+<main class="wrap">
+<article class="problem" id="problema-A" data-letter="A" data-title="Sudoku Paralelo">
+<div class="statement-content">
+<h1 class="moj-title"><span class="prob-letter" aria-hidden="true">A</span><span class="visually-hidden">Problema A: </span>Sudoku Paralelo</h1>
+<p>O Sudoku é um popular quebra-cabeça de lógica e raciocínio que se
+baseia na colocação de números. O nome vem do japonês “Suuji wa dokushin
+ni kagiru”, que significa algo como “Os números devem ser únicos”.</p>
+<p>O Sudoku é jogado em uma grade de N linhas e N colunas. O número N é
+um quadrado perfeito, de forma que ele também pode ser divido em regiões
+menores sqrt(N).</p>
+<p>Tradicionalmente, o Sudoku possui 9x9 (9 linhas e 9 colunas), que é
+subdividida em nove regiões de 3x3.</p>
+<p>O objetivo é preencher todas as células vazias com números de 1 a 9,
+de forma que, cada região, cada linha e cada coluna não possua números
+repetidos.</p>
+<p>O desafio consiste em usar a lógica pura (sem precisar de matemática,
+apenas organização) para deduzir qual número se encaixa em cada célula
+vazia, eliminando as possibilidades de acordo com os números que já
+estão presentes nas respectivas linhas, colunas e blocos.</p>
+<p>Veja no exemplo da tabela abaixo um Sudoku resolvido: todas as linhas
+contém apenas um número (de 1 a 9), assim como todas as colunas e todas
+as regiões. As diferentes regiões 3x3 estão destacadas em negrito, e
+também não possuem números repetidos.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>9</strong></td>
+<td><strong>5</strong></td>
+<td><strong>7</strong></td>
+<td>6</td>
+<td>1</td>
+<td>3</td>
+<td><strong>2</strong></td>
+<td><strong>8</strong></td>
+<td><strong>4</strong></td>
+</tr>
+<tr class="even">
+<td><strong>4</strong></td>
+<td><strong>8</strong></td>
+<td><strong>3</strong></td>
+<td>2</td>
+<td>5</td>
+<td>7</td>
+<td><strong>1</strong></td>
+<td><strong>9</strong></td>
+<td><strong>6</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>6</strong></td>
+<td><strong>1</strong></td>
+<td><strong>2</strong></td>
+<td>8</td>
+<td>4</td>
+<td>9</td>
+<td><strong>5</strong></td>
+<td><strong>3</strong></td>
+<td><strong>7</strong></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>7</td>
+<td>8</td>
+<td><strong>3</strong></td>
+<td><strong>6</strong></td>
+<td><strong>4</strong></td>
+<td>9</td>
+<td>5</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>2</td>
+<td>4</td>
+<td><strong>9</strong></td>
+<td><strong>7</strong></td>
+<td><strong>1</strong></td>
+<td>3</td>
+<td>6</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>6</td>
+<td>9</td>
+<td><strong>5</strong></td>
+<td><strong>2</strong></td>
+<td><strong>8</strong></td>
+<td>7</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td><strong>8</strong></td>
+<td><strong>4</strong></td>
+<td><strong>5</strong></td>
+<td>7</td>
+<td>9</td>
+<td>2</td>
+<td><strong>6</strong></td>
+<td><strong>1</strong></td>
+<td><strong>3</strong></td>
+</tr>
+<tr class="even">
+<td><strong>2</strong></td>
+<td><strong>9</strong></td>
+<td><strong>1</strong></td>
+<td>4</td>
+<td>3</td>
+<td>6</td>
+<td><strong>8</strong></td>
+<td><strong>7</strong></td>
+<td><strong>5</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>7</strong></td>
+<td><strong>3</strong></td>
+<td><strong>6</strong></td>
+<td>1</td>
+<td>8</td>
+<td>5</td>
+<td><strong>4</strong></td>
+<td><strong>2</strong></td>
+<td><strong>9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Neste problema, você deve criar um programa que recebe um número N (9
+&lt;= N &lt;= 6400) e um tabuleiro de Sudoku. Você deve então verificar
+se o tabuleiro está em uma configuração válida ou inválida.</p>
+<p>Note que, a maioria dos Sudokus são pequenos… No entanto ele pode
+crescer muito e possuir 6400 linhas e 6400 colunas!!! Neste caso, você
+só vai conseguir resolver o problema se usar programação paralela para a
+análise!! Caso contrário, o corretor irá lhe atribuir Time Limit
+Exceeded.</p>
+<h2 id="A-entrada">Entrada</h2>
+<p>A primeira linha contém um número N, quadrado perfeito, indicando o
+tamanho do Sudoku a ser analisado. As próximas N linhas contém um Sudoku
+N x N para ser analisado</p>
+<h2 id="A-saída">Saída</h2>
+<p>Após analisar o Sudoku, seu programa deve imprimir “Invalido” ou
+“Valido”</p>
+<h2 id="A-restrições">Restrições</h2>
+<p>Seu programa deve ser construído em OpenMP. * Não são admitidas
+construções usando <em>#pragma omp for reduction()</em> * Não são
+admitidas construções com o uso de pragmas de bloqueio como <em>#pragma
+omp atomic</em> ou <em>#pragma omp critical</em> * Uma matriz 6400 x
+6400 não cabe na stack. Não utilize variáveis locais.</p>
+<section class="moj-exemplos"><h2>Exemplos</h2><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 1 do problema A">Copiar</button></h3><pre data-sample="sample1" data-kind="input">9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 1 do problema A">Copiar</button></h3><pre data-sample="sample1" data-kind="output">Invalido
+</pre></div></section>
+
+</div>
+</article>
+<article class="problem" id="problema-B" data-letter="B" data-title="Multiplicação de Matrizes em Paralelo">
+<div class="statement-content">
+<h1 class="moj-title"><span class="prob-letter" aria-hidden="true">B</span><span class="visually-hidden">Problema B: </span>Multiplicação de Matrizes em Paralelo</h1>
+<p>A multiplicação de matrizes é uma das mais importantes operações da
+matemática e possui diversas aplicações na computação, como em Jogos
+Eletrônicos, Modelagem 3D, na Inteligência Artificial usando Redes
+Neurais, além de ser utilizada em diversos campos.</p>
+<p>Ela é amplamente estudada e muitas otimizações são atualmente
+conhecidas. Nesta questão, iremos estudar um pouco essa operação e vamos
+explorar um pouco o paralelismo. O objetivo é realizar a multiplicação
+das matrizes A, B na matriz resultante C. E então, imprimir toda a
+matriz C.</p>
+<p>Por exemplo, considera a matriz A (2x3):</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>5</strong></th>
+<th><strong>3</strong></th>
+<th><strong>7</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>9</strong></td>
+<td><strong>1</strong></td>
+<td><strong>4</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Considere também a matriz B (3x2):</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>1</strong></th>
+<th><strong>5</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>2</strong></td>
+<td><strong>6</strong></td>
+</tr>
+<tr class="even">
+<td><strong>4</strong></td>
+<td><strong>7</strong></td>
+</tr>
+</tbody>
+</table>
+<p>O resultado, será a matriz C (2x2), onde o elemento (1,1) será
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>*</mo><mn>1</mn><mo>+</mo><mn>3</mn><mo>*</mo><mn>2</mn><mo>+</mo><mn>7</mn><mo>*</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">5*1+3*2+7*4</annotation></semantics></math>
+o elemento (1,2) será
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>*</mo><mn>5</mn><mo>+</mo><mn>5</mn><mo>*</mo><mn>6</mn><mo>+</mo><mn>7</mn><mo>*</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">5*5+5*6+7*7</annotation></semantics></math>,
+como mostra a Tabela abaixo:</p>
+<table>
+<thead>
+<tr class="header">
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>c</mi><mrow><mn>1</mn><mo>,</mo><mn>1</mn></mrow></msub><mo>=</mo><mn>5</mn><mo>*</mo><mn>1</mn><mo>+</mo><mn>3</mn><mo>*</mo><mn>2</mn><mo>+</mo><mn>7</mn><mo>*</mo><mn>4</mn><mo>=</mo><mn>39</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c_{1,1}=5*1+3*2+7*4 = 39)</annotation></semantics></math></th>
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>c</mi><mrow><mn>1</mn><mo>,</mo><mn>2</mn></mrow></msub><mo>=</mo><mn>5</mn><mo>*</mo><mn>5</mn><mo>+</mo><mn>3</mn><mo>*</mo><mn>6</mn><mo>+</mo><mn>7</mn><mo>*</mo><mn>7</mn><mo>=</mo><mn>92</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c_{1,2}=5*5+3*6+7*7 = 92)</annotation></semantics></math></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>c</mi><mrow><mn>2</mn><mo>,</mo><mn>1</mn></mrow></msub><mo>=</mo><mn>9</mn><mo>*</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>*</mo><mn>2</mn><mo>+</mo><mn>4</mn><mo>*</mo><mn>4</mn><mo>=</mo><mn>27</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c_{2,1}=9*1+1*2+4*4 = 27)</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>c</mi><mrow><mn>2</mn><mo>,</mo><mn>2</mn></mrow></msub><mo>=</mo><mn>9</mn><mo>*</mo><mn>5</mn><mo>+</mo><mn>1</mn><mo>*</mo><mn>6</mn><mo>+</mo><mn>4</mn><mo>*</mo><mn>7</mn><mo>=</mo><mn>79</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c_{2,2}=9*5+1*6+4*7 = 79)</annotation></semantics></math></td>
+</tr>
+</tbody>
+</table>
+<p>Assim, a matriz C (2x2) será:</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>39</strong></th>
+<th><strong>92</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>27</strong></td>
+<td><strong>79</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Neste exercício, você deve explorar o paralelismo! Todas as células
+podem ser calculadas em paralelo.</p>
+<h2 id="B-entrada">Entrada</h2>
+<p>A primeira linha é composta por 3 números inteiros:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+e
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>.
+Depois, a matriz
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+é dada como entrada, onde nas próximas
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+linhas,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+números são passados em cada. Depois, a matriz
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+é a entrada. Onde nas próximas
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+linhas,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+números são passados.</p>
+<h2 id="B-saída">Saída</h2>
+<p>Seu programa deve imprimir a matriz,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>,
+com
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+linhas e
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+colunas. A matriz
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+é de ponto flutuante de precisão dupla (double) e deve ser impresso
+apenas 2 casas decimais.</p>
+<h2 id="B-restrições">Restrições</h2>
+<p>Seu programa deve ser construído em OpenMP.</p>
+<ul>
+<li>As operações na matriz C devem ser de ponto flutuante de precisão
+dupla (double)</li>
+<li>Não são admitidas construções usando <em>#pragma omp for
+reduction()</em></li>
+<li>Não são admitidas construções com o uso de pragmas de bloqueio como
+<em>#pragma omp atomic</em> ou <em>#pragma omp critical</em></li>
+</ul>
+<section class="moj-exemplos"><h2>Exemplos</h2><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 1 do problema B">Copiar</button></h3><pre data-sample="sample1" data-kind="input">52 7 82
+7157 2055 6450 10954 2025 1570 6523 
+957 15090 9880 7477 1031 4782 13402 
+10239 1203 17481 5262 939 13710 4869 
+2119 1154 3837 15177 4070 15800 15328 
+8758 10958 5706 1320 1316 4272 1537 
+13544 4648 15834 5043 16108 2935 11835 
+11432 10389 6766 8220 14349 13429 1640 
+5881 7942 5574 9802 17166 4164 1591 
+6886 8088 59 10760 17021 2013 3513 
+2609 6828 5724 11131 9476 3823 19015 
+4981 12644 359 5768 6118 3741 13228 
+11758 9335 2078 196 352 1136 8807 
+2927 4446 4716 13285 12215 5616 229 
+18427 13639 8271 8251 387 48 9264 
+16910 135 19248 3142 3342 10738 791 
+5662 11366 6585 2554 12358 5240 13327 
+18957 11753 3770 11521 7784 2026 19974 
+3441 10568 5117 17261 12242 5167 3256 
+11696 4576 8386 7426 6248 5396 1273 
+12553 15661 9732 14260 12769 1491 12732 
+13496 9811 4394 8717 9557 12711 228 
+6260 1439 9046 11374 3816 4986 4745 
+11167 2168 18841 3350 10557 2943 10774 
+87 7099 1642 12518 2114 6983 590 
+12632 8884 4481 10018 11853 6356 3938 
+10830 18651 1703 14327 6526 2800 14743 
+2213 7498 4400 3470 5687 5459 13381 
+3293 11603 680 10532 5691 8851 8155 
+2015 6913 6370 489 6062 2150 18420 
+3302 18510 6675 227 8240 2043 6331 
+3409 9661 7264 16881 8622 18496 6190 
+9697 150 1310 11525 4238 3457 3192 
+17732 5698 2458 6540 4068 15678 10371 
+5616 12625 10840 6539 17416 1021 15319 
+17263 6587 17674 1632 16883 18417 19582 
+12012 6614 3485 2310 2873 6895 7233 
+4887 19601 11065 6707 18858 6382 402 
+1719 2523 18709 1511 10830 10986 11833 
+16543 10584 19755 2698 5561 7652 3856 
+1628 17222 2793 11885 15145 9667 2087 
+6938 695 3793 3969 713 9077 5818 
+18150 11852 2301 5799 13033 6390 9769 
+13117 14613 15117 10882 13282 287 5894 
+3622 7344 17235 9989 18341 396 9027 
+11804 5328 6170 11958 17244 5555 9610 
+8385 18700 3982 17216 16641 7077 9248 
+18261 7611 7869 19478 3524 1910 11969 
+10145 6206 11561 1497 17262 12558 18808 
+10909 10782 13629 15779 14776 7630 11187 
+7452 9106 2645 11247 17686 2871 8379 
+3114 1894 3466 13321 5436 12495 13562 
+10383 6910 19823 5063 2377 6221 5289 
+1401 19782 19777 16269 12129 15156 3736 
+16727 6558 7569 12813 7 19411 810 
+18613 18306 10711 3496 9039 17461 16585 
+2259 8022 2612 17622 7644 11293 3751 
+4792 8355 10392 10744 2636 15178 12148 
+8249 4136 9886 8576 10795 8003 3774 
+5066 8243 13761 6332 7207 17498 5084 
+3739 10833 16387 4503 2916 1263 4232 
+8432 6467 8909 4604 12051 12249 2556 
+1390 648 9629 3124 8546 12214 18705 
+6421 9753 8196 10995 6880 13388 14147 
+17456 19656 10545 3037 10274 6758 18294 
+10970 10548 7612 16644 14581 10186 9989 
+15156 17643 12008 3105 5494 8311 10760 
+12376 10172 1660 1521 18409 9456 7320 
+3616 5961 11563 12327 11150 14681 18107 
+6780 5128 10629 275 15657 3040 7753 
+4082 9867 10681 18500 1189 9871 6592 
+1115 9363 2728 5514 8626 9170 8141 
+1482 19148 8255 1777 2317 7303 12072 
+6153 2622 4929 4282 4168 16778 4490 
+17456 2526 9403 4392 11915 6025 3679 
+4453 19081 11939 7231 7681 7788 7270 
+14101 6391 3531 1419 17515 9588 3418 
+6076 13542 6198 8311 18935 216 4634 
+1929 4159 3460 8631 407 16361 6638 
+16822 8504 6327 4977 3816 8972 8919 
+11552 15976 6965 12698 8396 1840 9133 
+494 10137 4312 16604 10263 10 7780 
+14992 494 12250 6479 1377 9643 16134 
+643 1056 13667 2831 8152 5569 2390 
+9940 4096 6983 471 15932 3157 464 
+5975 9112 8298 2480 1642 6192 4806 
+1394 10825 9584 12574 7218 15901 824 
+15734 13743 17302 4755 11286 7959 5033 
+8730 19123 6389 9471 2854 4988 19622 
+10965 5989 12704 13838 16116 11062 8943 
+7695 5485 5425 7809 17682 18921 11314 
+12297 4945 3903 13839 2697 12039 9380 
+1122 1192 4130 4853 6160 5124 2182 
+9631 2262 7888 3007 16542 1331 2072 
+1184 6733 3966 7906 7581 9382 14914 
+4810 6609 1984 828 2975 1228 14291 
+17601 13212 1701 17394 6557 1129 11915 
+10127 12013 13104 19019 8309 6581 6085 
+17065 7696 4682 6416 2469 7959 2785 
+13117 850 10113 9096 3781 14118 11145 
+5514 7124 452 9194 9933 10679 4662 
+3182 15999 17476 8729 3304 1823 2238 
+16851 6982 1098 7462 12380 6042 4488 
+14282 3719 18156 12358 5164 5414 10961 
+244 10134 8063 7027 10166 3979 909 
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 1 do problema B">Copiar</button></h3><pre data-sample="sample1" data-kind="output">265109164.00 373296650.00 344101373.00 192337489.00 214896515.00 465074525.00 238415192.00 269297375.00 335196917.00 270689540.00 369771870.00 176017962.00 276783074.00 127386945.00 270576936.00 249301717.00 307298093.00 284651510.00 398976507.00 331947888.00 344274878.00 130957123.00 168743766.00 243117745.00 262206897.00 309880629.00 322406806.00 117937145.00 181621092.00 196894940.00 173857556.00 230144913.00 114252718.00 219065499.00 260486220.00 198999766.00 198135269.00 112145790.00 313037185.00 210487444.00 121177959.00 121435949.00 172085099.00 124866925.00 249578476.00 251665663.00 164104317.00 306743612.00 194953508.00 136259309.00 168574672.00 165317231.00 119580761.00 115398349.00 195653840.00 272891563.00 223117687.00 192486433.00 287302654.00 113157216.00 147283918.00 285754913.00 191311790.00 192013422.00 167996802.00 353059359.00 149564884.00 161566461.00 232917498.00 407103820.00 223740756.00 175205294.00 240652001.00 150262896.00 262441991.00 229826861.00 372316052.00 180917582.00 339190344.00 255421254.00 108749238.00 291744295.00
+271811863.00 521491521.00 357352840.00 230313963.00 233277703.00 556411829.00 377834236.00 301413434.00 442356266.00 358043348.00 462795919.00 291976112.00 176794932.00 177279458.00 271818634.00 241844508.00 424237282.00 355764944.00 349066722.00 221040145.00 454348386.00 235626556.00 199745407.00 253016976.00 233819769.00 398691439.00 430123055.00 254628435.00 371791849.00 395314419.00 177168579.00 232268841.00 213351967.00 145624616.00 366605662.00 235665566.00 281327938.00 93640421.00 357651196.00 329579952.00 307196935.00 151436496.00 268156713.00 150620373.00 184380629.00 363434451.00 124564673.00 221897104.00 306026058.00 219339296.00 228590999.00 99258415.00 339109966.00 234747518.00 175345908.00 239608271.00 221711298.00 358481936.00 262620781.00 97583017.00 153385950.00 255452688.00 223045031.00 368833851.00 182575804.00 476008016.00 150716681.00 213048649.00 230412623.00 419982960.00 278836259.00 171170885.00 280113654.00 325056338.00 401705033.00 278532391.00 398464538.00 187561162.00 315635673.00 369521367.00 177343176.00 254927694.00
+158370633.00 569531859.00 439827279.00 254459769.00 274440645.00 524510769.00 231866496.00 364697838.00 480003210.00 187346172.00 334636146.00 114642921.00 325348545.00 117590019.00 382418703.00 251863620.00 458211954.00 258145044.00 495181803.00 400430454.00 372942381.00 151743228.00 191599098.00 264246807.00 374755878.00 369071097.00 463941420.00 184562814.00 305264952.00 276061218.00 181777380.00 315815850.00 81973146.00 353970822.00 273011418.00 391129350.00 272589522.00 122131044.00 322725849.00 392458122.00 123736695.00 260444811.00 212434032.00 137270682.00 352410879.00 398026713.00 137682624.00 282732768.00 326655201.00 133580400.00 273657630.00 271277964.00 126575301.00 220010565.00 161871006.00 260805084.00 172875852.00 368196183.00 245336055.00 92908740.00 239709549.00 352552359.00 229530600.00 140981430.00 109693392.00 327911229.00 162761058.00 157812039.00 351593817.00 463188174.00 333295140.00 255101346.00 401002176.00 162928470.00 401733249.00 400674678.00 525569292.00 275695803.00 460508766.00 311928189.00 146661711.00 336341325.00
+351802075.00 249642222.00 264092046.00 104916067.00 170921667.00 441513798.00 258404119.00 188957857.00 303836651.00 309492783.00 381011279.00 224688642.00 209848353.00 145539111.00 174503493.00 203687908.00 246689603.00 317445092.00 403149652.00 293484119.00 291886809.00 128112219.00 157451461.00 269304089.00 193269504.00 306879325.00 262832877.00 86603748.00 138520602.00 134489265.00 151804209.00 190034299.00 126113866.00 145867035.00 222719151.00 122727343.00 176806453.00 71334671.00 310468856.00 112925370.00 71649579.00 74342030.00 149172652.00 90549616.00 187435822.00 201185405.00 163277550.00 273843068.00 146169049.00 129672461.00 93740233.00 70369090.00 85960654.00 72482410.00 237337814.00 305565574.00 228620821.00 114581822.00 302080880.00 114077621.00 71285043.00 246693758.00 195762941.00 214144283.00 211734334.00 352958142.00 154081075.00 134188651.00 164837404.00 349155118.00 185607579.00 123666353.00 180893855.00 85951580.00 209521427.00 131713582.00 304305850.00 77122001.00 246830027.00 207206084.00 90506475.00 273611276.00
+134330116.00 489346902.00 370002258.00 281934106.00 242991198.00 431364720.00 256391638.00 319576492.00 295894328.00 272922090.00 376261388.00 168741048.00 243910206.00 99596460.00 313518486.00 309891286.00 342275204.00 204744380.00 228135886.00 249340940.00 407262426.00 164235540.00 196190404.00 136855940.00 297999264.00 291723826.00 344319840.00 203381112.00 291295638.00 325269876.00 195549720.00 221143582.00 158388646.00 210042792.00 320515146.00 204481570.00 190153300.00 135338444.00 249459314.00 298886280.00 278367078.00 117543134.00 198391180.00 157519612.00 198195886.00 260122934.00 109065528.00 239381912.00 223382482.00 158108588.00 233218684.00 192626776.00 266825398.00 174335218.00 72769616.00 125531860.00 174001096.00 282076274.00 186423518.00 80356532.00 195138270.00 221919770.00 128774420.00 226034984.00 81543136.00 336050262.00 93430816.00 194525026.00 224897398.00 371595064.00 204163032.00 173097404.00 219776768.00 313344632.00 291366686.00 278583160.00 324107476.00 266474582.00 329558984.00 304292642.00 130339842.00 197121530.00
+348815723.00 751329669.00 633180285.00 345168590.00 469114572.00 756012714.00 443825831.00 510789413.00 550389142.00 503876694.00 691695088.00 282844176.00 441508611.00 159463161.00 491097813.00 603187565.00 613500349.00 306592282.00 612115943.00 634687270.00 569712297.00 250583541.00 452833157.00 323942473.00 713660361.00 599964869.00 593697324.00 305779512.00 516771312.00 355021662.00 389109399.00 474907286.00 231958820.00 542116044.00 418245321.00 414811550.00 294337454.00 168191761.00 368624986.00 439948329.00 212651724.00 256578940.00 251037317.00 184086764.00 384118724.00 422976571.00 167786040.00 354553990.00 349611452.00 171418417.00 323645600.00 321189014.00 202834721.00 241446308.00 162291145.00 267418289.00 222233282.00 404545135.00 286968520.00 114957559.00 286430433.00 390169945.00 236452321.00 196660183.00 121728932.00 405507609.00 172052795.00 214712747.00 387930137.00 546533291.00 352877868.00 287095762.00 415836490.00 263103151.00 437944585.00 446588177.00 567417155.00 352199908.00 529714207.00 380256862.00 169598601.00 364991038.00
+412936713.00 666348646.00 585004298.00 348642196.00 431776078.00 741624537.00 479492900.00 469402262.00 456946385.00 588763959.00 744361631.00 354064811.00 403224747.00 179158573.00 434723903.00 610202093.00 526095640.00 351657130.00 497000098.00 543595585.00 611437301.00 262783866.00 430589118.00 295252071.00 606419271.00 561960569.00 516462231.00 292752298.00 460295350.00 377885075.00 386992630.00 404225265.00 286851540.00 408766787.00 466972992.00 269864673.00 262107487.00 180209850.00 389163815.00 346750041.00 304061040.00 148112869.00 259646505.00 204635566.00 299131345.00 341138095.00 192202194.00 387060058.00 279744924.00 211491904.00 279884617.00 247218696.00 291032108.00 196445107.00 178085425.00 264378735.00 284054917.00 321124884.00 330110147.00 136910850.00 238681643.00 344109358.00 211909752.00 305723662.00 172879198.00 489660364.00 162773558.00 258913263.00 308519586.00 542740139.00 284335401.00 237040455.00 300284575.00 349797713.00 374565655.00 344052313.00 466413485.00 319625854.00 459725358.00 395665443.00 166248181.00 329253067.00
+448579539.00 516535802.00 472001115.00 234236077.00 372369357.00 659646914.00 463116014.00 364326283.00 402590746.00 576365135.00 699265923.00 364432687.00 306374017.00 174403006.00 315759687.00 537822240.00 448874627.00 330513444.00 473664241.00 485584127.00 503259527.00 241638427.00 410005224.00 293579604.00 538793640.00 531322264.00 433953375.00 253370409.00 415397416.00 284411617.00 346747622.00 353609160.00 273522320.00 343847026.00 382531946.00 202982763.00 220422280.00 120089164.00 334309574.00 244925767.00 217055943.00 111525000.00 210299440.00 147380877.00 221028465.00 275839316.00 159596589.00 298771098.00 221734174.00 175378611.00 193251111.00 147299653.00 221038369.00 150152622.00 184452123.00 254738250.00 239718396.00 239386421.00 289354061.00 114758098.00 154389157.00 273625131.00 193651998.00 273000412.00 177068384.00 416202147.00 146667198.00 197214770.00 226695518.00 425325381.00 231136119.00 172702107.00 235088208.00 244997011.00 300996252.00 240065482.00 369215191.00 199347102.00 335371066.00 307527745.00 133733223.00 275510252.00
+459852236.00 447813543.00 448641038.00 235944752.00 355606588.00 619982179.00 443773565.00 341850381.00 317922447.00 595930465.00 702067464.00 364886146.00 311486831.00 164044755.00 293009313.00 558299880.00 377683795.00 315683612.00 407261794.00 465498650.00 498626197.00 221927693.00 399758998.00 259970527.00 508136877.00 486724854.00 367232202.00 220645935.00 351879923.00 253069234.00 351213606.00 319519218.00 278888801.00 303851797.00 381895471.00 122180979.00 176667157.00 133446122.00 317309572.00 175928386.00 227060524.00 49066986.00 187550465.00 152832797.00 189413863.00 201853562.00 172679723.00 325625404.00 157337465.00 171193583.00 162269254.00 134065149.00 218028692.00 100645756.00 177082218.00 237680205.00 259318325.00 161412846.00 298458541.00 123490576.00 135349503.00 247722438.00 160767502.00 274678204.00 181873166.00 412499190.00 131630546.00 205793026.00 185741375.00 409356006.00 176496032.00 147719092.00 162427839.00 256653754.00 230505458.00 181451533.00 301699908.00 192617905.00 303632730.00 285004299.00 113583697.00 251730242.00
+376389322.00 400145153.00 354311790.00 170083223.00 261042093.00 543239234.00 368029263.00 271603586.00 365259510.00 430106375.00 525410309.00 298897609.00 226503592.00 162359155.00 236973492.00 343625053.00 359182102.00 323794382.00 412525922.00 347867047.00 399314564.00 196518730.00 271533667.00 272143637.00 339796425.00 416129525.00 358421661.00 189578265.00 302562136.00 241774669.00 233987255.00 260294320.00 205902888.00 220122148.00 308189681.00 171112063.00 210275048.00 87192627.00 318408382.00 201723592.00 173088915.00 101262962.00 192647201.00 118543657.00 186713887.00 257185879.00 145541421.00 255354152.00 203932502.00 162137234.00 152595997.00 93966203.00 189285956.00 134538412.00 197947148.00 262749187.00 221622748.00 209428618.00 276939547.00 105556755.00 111864070.00 245978090.00 195349097.00 266098917.00 187607784.00 391455126.00 145395067.00 167732565.00 191549337.00 374966296.00 215528841.00 143996963.00 214222268.00 191170038.00 278122457.00 193967327.00 334397366.00 135398138.00 278090931.00 270598425.00 122456484.00 258032512.00
+271422528.00 406717767.00 338869369.00 234859071.00 243861637.00 464750140.00 333776504.00 278159288.00 258508127.00 407110663.00 488438507.00 269766168.00 209235988.00 130280760.00 246223730.00 361763557.00 303465422.00 257118726.00 226840241.00 250257693.00 425538726.00 188580830.00 243771386.00 164528218.00 292982691.00 333471700.00 303545597.00 201759314.00 287988952.00 298889959.00 228141348.00 206493357.00 220246756.00 157499265.00 339919434.00 104095343.00 167812749.00 118202940.00 265682680.00 201879795.00 285905585.00 45059072.00 191204575.00 147777862.00 131705246.00 199444778.00 124737112.00 243279610.00 167041081.00 173706480.00 171264257.00 107137230.00 282554565.00 129552380.00 112660343.00 154405205.00 210714829.00 200381451.00 223636216.00 94072444.00 131005404.00 187150805.00 126823146.00 289245926.00 136172598.00 380600233.00 97151054.00 199918812.00 155354837.00 345694441.00 157067695.00 124694007.00 139843955.00 310563267.00 236782014.00 179112009.00 249455045.00 192029653.00 252211874.00 286140698.00 119550756.00 180387452.00
+90178718.00 442960588.00 359230744.00 297577574.00 230510666.00 369058592.00 198829115.00 311847502.00 213313257.00 239270306.00 334292399.00 121426208.00 268777951.00 70150266.00 316232893.00 323527146.00 279456284.00 153707520.00 163067918.00 243751589.00 384538947.00 127724284.00 176376776.00 87132604.00 288298617.00 228533473.00 284709975.00 164788418.00 223869819.00 285609191.00 193822312.00 197221742.00 134720143.00 206100839.00 301242899.00 160636574.00 143877905.00 154955210.00 212354125.00 258048997.00 268229418.00 81161571.00 166494843.00 162096256.00 193798093.00 196867589.00 113380812.00 262332186.00 169644168.00 136743294.00 220699369.00 218247486.00 237242374.00 132242761.00 42751173.00 89349521.00 170885251.00 222171198.00 172159747.00 80859566.00 200345207.00 205266288.00 88189864.00 180474238.00 55513794.00 292764242.00 71927634.00 192447481.00 208298542.00 354420207.00 159378681.00 164935915.00 172237137.00 309596541.00 226600821.00 254021303.00 276567049.00 287996118.00 324415154.00 273942563.00 106568681.00 174671645.00
+431024029.00 374069153.00 364718802.00 154071629.00 276569241.00 564234773.00 381106176.00 269951756.00 360544590.00 469822310.00 565368773.00 316088626.00 249400786.00 167610574.00 232340148.00 381246124.00 352560964.00 335079752.00 455683880.00 399503767.00 397397516.00 192640246.00 300327355.00 295312712.00 377749389.00 439153403.00 350894829.00 174436797.00 288906013.00 202401853.00 257497619.00 277643149.00 211208955.00 246620308.00 302054930.00 157119232.00 199768298.00 87080049.00 325421584.00 167469298.00 135532005.00 89833232.00 178717517.00 112617535.00 195743335.00 236963191.00 160895835.00 278844476.00 181586486.00 152865434.00 132705349.00 91817105.00 149106404.00 108427882.00 220770014.00 289449559.00 234892258.00 170334118.00 299400583.00 114431289.00 100364476.00 256153562.00 199682903.00 249951903.00 203689548.00 387662346.00 153424705.00 160822569.00 187167135.00 379630294.00 207121761.00 141144323.00 204013406.00 153703140.00 253155413.00 173146415.00 331413572.00 119435990.00 277431513.00 251933265.00 111269898.00 274499134.00
+291822126.00 813750902.00 674255166.00 495646591.00 422289813.00 784038203.00 413582177.00 567114997.00 519747760.00 468342134.00 654802170.00 274511545.00 509502022.00 182673142.00 573845322.00 538729611.00 568623785.00 404378706.00 487342120.00 510978224.00 712823564.00 254299795.00 316951797.00 287282202.00 509071041.00 498226672.00 587754408.00 290154882.00 407638600.00 504533332.00 343148405.00 397406064.00 242625950.00 389216782.00 554066825.00 349814112.00 331926400.00 262737187.00 493442387.00 479578537.00 420974727.00 196849203.00 337123543.00 285914682.00 413771091.00 440376866.00 252739716.00 529430682.00 364059949.00 271914243.00 394449966.00 375069274.00 388450768.00 258669045.00 199302861.00 312566871.00 367889934.00 429625940.00 417716351.00 178538917.00 348025012.00 457790538.00 256137399.00 374080015.00 194881892.00 623655768.00 200326047.00 351554264.00 424710776.00 727258299.00 367993992.00 328227672.00 396217746.00 490037647.00 485419404.00 481971673.00 616781137.00 474224199.00 638145511.00 527516239.00 215954622.00 426171755.00
+149247208.00 712614056.00 574026134.00 352800286.00 369478502.00 614039726.00 254584547.00 478596650.00 527255387.00 231143072.00 417286131.00 102797964.00 447852491.00 111307026.00 506710569.00 392202388.00 545580020.00 247485164.00 561251232.00 536078385.00 463549199.00 165809632.00 270084258.00 273261172.00 539616993.00 432300915.00 546864871.00 220615892.00 367802685.00 319125611.00 261176294.00 404466570.00 95102029.00 492644697.00 334092171.00 469639864.00 293312735.00 177363804.00 348076609.00 476733403.00 153846966.00 303486983.00 232861523.00 179244718.00 443298151.00 442704859.00 164093358.00 363821246.00 365310386.00 139721006.00 347428489.00 387097928.00 134080880.00 245607481.00 145339355.00 261587041.00 194148937.00 422990368.00 266899729.00 107740776.00 323001943.00 420533366.00 235323578.00 111249816.00 84341814.00 344124264.00 171780616.00 193291479.00 434610330.00 556001137.00 375597669.00 319062803.00 465417035.00 212119335.00 445807775.00 500642999.00 614505215.00 390427280.00 582372384.00 361994049.00 160973541.00 386603821.00
+280658057.00 519731081.00 412026700.00 247386108.00 321561654.00 537029648.00 387670400.00 338119187.00 347122517.00 449599028.00 560721106.00 285350357.00 236254781.00 131996788.00 298350661.00 450726935.00 415276225.00 237849446.00 321358878.00 354038704.00 450877833.00 221133133.00 340213262.00 196273428.00 457520091.00 434243076.00 397024840.00 263605387.00 416113286.00 321961204.00 285647918.00 294633375.00 238913598.00 287019887.00 348904014.00 207606388.00 199266437.00 110116272.00 254185202.00 284643230.00 264128864.00 118572748.00 200737775.00 140793247.00 174278951.00 267875906.00 100008265.00 206789916.00 229110659.00 160917959.00 212615108.00 148414183.00 266468454.00 178927934.00 90819862.00 141232615.00 167592865.00 283083080.00 185590877.00 75671518.00 166484617.00 208456480.00 142352248.00 245580930.00 98982502.00 342273140.00 99267300.00 181249314.00 205898855.00 348028250.00 207291226.00 156525358.00 218113099.00 290860202.00 298588910.00 255600947.00 314837048.00 220836855.00 294070004.00 295618955.00 132634579.00 191849156.00
+418403924.00 772576951.00 704558366.00 481667239.00 471332653.00 837366098.00 475013406.00 573430544.00 484237145.00 606392135.00 789430020.00 343926891.00 548897461.00 195814679.00 563677971.00 668693121.00 554499902.00 423111602.00 530354292.00 607659084.00 743320277.00 264629458.00 408628885.00 314226787.00 610142958.00 559254278.00 567453708.00 283480845.00 410312653.00 452331252.00 418417753.00 432106554.00 290487441.00 433448877.00 572493884.00 287838651.00 299096319.00 270065995.00 498453065.00 402028899.00 394877263.00 145341399.00 314046748.00 284621903.00 401411008.00 378244944.00 279199415.00 572320942.00 304699366.00 265470392.00 354633058.00 358600823.00 353695090.00 203921215.00 224916303.00 336564756.00 399668705.00 344137996.00 453502286.00 195386871.00 321914303.00 454155594.00 245397223.00 371293437.00 222216630.00 630159060.00 202756355.00 353595062.00 394075509.00 727365225.00 328604318.00 309280090.00 341573187.00 464243037.00 421756046.00 422679354.00 574808969.00 450164956.00 617123195.00 500431064.00 195221143.00 431829639.00
+550019601.00 528808026.00 483736352.00 239739077.00 351921213.00 757635130.00 518661933.00 368178975.00 483258013.00 622036285.00 746372403.00 434596924.00 315701185.00 233693183.00 318116989.00 478716112.00 471630149.00 472144796.00 552669438.00 466519111.00 570215237.00 273469277.00 366697861.00 377514481.00 438090342.00 566704187.00 476006009.00 252025326.00 391373420.00 337341641.00 324653253.00 342931375.00 298395444.00 269120401.00 444280557.00 195646557.00 284836219.00 129111299.00 459126194.00 249710858.00 261338913.00 108671960.00 271120190.00 173531654.00 244943618.00 334149915.00 218861724.00 381316676.00 261613061.00 238338635.00 199270049.00 114838124.00 281431992.00 169332284.00 290761502.00 378591240.00 336655055.00 260714848.00 412072976.00 159106325.00 143618907.00 339691904.00 270105633.00 402139447.00 284270346.00 577579820.00 205458403.00 249505429.00 248867740.00 533881918.00 282948675.00 190190253.00 267373733.00 286315620.00 367736609.00 240880132.00 444799506.00 181372865.00 376776611.00 383036972.00 169008107.00 361030650.00
+270851796.00 543860592.00 476757878.00 291231120.00 322131632.00 574765088.00 310543822.00 385548664.00 395421982.00 362414996.00 498323404.00 207892278.00 363171020.00 132163038.00 382822984.00 412328936.00 420724948.00 281269392.00 441515518.00 443866500.00 460343904.00 176191636.00 277540222.00 248340686.00 441645792.00 405805982.00 424386568.00 195461230.00 307049036.00 283180460.00 267355962.00 321838674.00 165567164.00 343509870.00 346270470.00 272109532.00 228494190.00 156719730.00 333540260.00 310741494.00 197788444.00 161102452.00 208753784.00 167574158.00 305627050.00 308500390.00 171839330.00 349495652.00 249265562.00 158512464.00 247051840.00 251294346.00 182423226.00 164356384.00 163377622.00 249364528.00 234101318.00 277116882.00 287998238.00 118430042.00 221993904.00 327752758.00 193757874.00 203039386.00 139205364.00 385660646.00 150103030.00 203542734.00 298918396.00 480392834.00 265266476.00 226204872.00 297228346.00 241157034.00 326150202.00 325605312.00 443112982.00 285990794.00 432907630.00 322151566.00 135050412.00 314372608.00
+552237984.00 866797166.00 739395083.00 449150589.00 519125567.00 989349893.00 628291036.00 595311847.00 644825721.00 736094996.00 935211904.00 476122908.00 502485032.00 262890771.00 554597574.00 694799421.00 688010469.00 533955678.00 668271269.00 645187102.00 810574736.00 352706779.00 490499636.00 421566167.00 671657079.00 718942781.00 689990524.00 374620919.00 570608982.00 532173350.00 453144062.00 494859443.00 367154088.00 454414467.00 627808416.00 356612406.00 385701337.00 231004300.00 573785495.00 467666980.00 424544487.00 202096791.00 377249437.00 276667815.00 396789084.00 491240687.00 273237675.00 528957780.00 400509082.00 312342669.00 371109954.00 294920401.00 422085967.00 280133463.00 287335968.00 408359649.00 413206071.00 449546327.00 486959174.00 196875622.00 302717512.00 479407983.00 322527672.00 475649668.00 281295218.00 725722737.00 244033590.00 361949789.00 414226454.00 758023068.00 407075466.00 317057124.00 418863513.00 480074884.00 539959947.00 454765231.00 653310916.00 399489696.00 614643970.00 560373094.00 241111128.00 470551553.00
+364653676.00 631811427.00 567309509.00 367269626.00 396419714.00 693317863.00 418350367.00 458961819.00 410860379.00 525324133.00 673882821.00 306231493.00 420241116.00 164536360.00 439866194.00 562747226.00 472664853.00 340774460.00 448441163.00 504882561.00 597179040.00 231126599.00 367364461.00 266328142.00 532526610.00 490416874.00 474666877.00 252142428.00 379648076.00 365631999.00 354008211.00 366197045.00 253850158.00 368259247.00 458487893.00 242517087.00 245739457.00 199725917.00 390928767.00 327957786.00 309744248.00 126746611.00 252375404.00 216543800.00 307945665.00 314293438.00 208638316.00 424896264.00 255224918.00 210478481.00 279187935.00 267386716.00 285068251.00 174724977.00 177052066.00 263958378.00 302686583.00 290549849.00 346098303.00 147056211.00 247094358.00 351224389.00 200126495.00 298982839.00 174239314.00 494210071.00 160491207.00 271081462.00 308538051.00 560208446.00 268105279.00 240250043.00 280098865.00 360735140.00 348499808.00 336291376.00 456652080.00 340297164.00 474349051.00 394921909.00 158763432.00 334726771.00
+291365618.00 402310986.00 361231236.00 182127968.00 233662520.00 502413164.00 265903501.00 280459058.00 383351069.00 289590956.00 397508621.00 193902118.00 277929015.00 138755124.00 277479533.00 259768288.00 348324408.00 301874852.00 454827138.00 364349279.00 350469043.00 146141104.00 194163570.00 274311746.00 299531847.00 353079703.00 359345573.00 135952952.00 221374971.00 202214213.00 185324346.00 258085998.00 121360623.00 250720831.00 262310113.00 235409816.00 219605137.00 102052436.00 326410961.00 233703085.00 104755932.00 149616527.00 181107705.00 118652694.00 264901767.00 285286135.00 161568858.00 296656538.00 222579276.00 137381762.00 175838487.00 164510064.00 111200342.00 134017617.00 210061733.00 293188475.00 217827291.00 221323074.00 291022085.00 111370760.00 149423187.00 300788900.00 212246518.00 191914884.00 174416018.00 357731662.00 161172796.00 154491295.00 249913468.00 415033159.00 250144143.00 184894957.00 274530857.00 131822569.00 293104451.00 250210057.00 405319829.00 173163122.00 350626508.00 261758057.00 116741881.00 308946061.00
+238751505.00 670181549.00 532216145.00 283275189.00 380196133.00 631072447.00 339578991.00 434741092.00 527794447.00 336709630.00 507124721.00 191665555.00 366693374.00 131169783.00 430487606.00 431488826.00 554567630.00 256985572.00 563642379.00 527105939.00 449302758.00 203444084.00 341198814.00 291671277.00 578459043.00 498874420.00 539777031.00 258202480.00 444292167.00 307156705.00 288656132.00 408927696.00 153136777.00 475712305.00 325113637.00 428717280.00 282785199.00 129508598.00 319158528.00 430627295.00 145726155.00 279490660.00 222598739.00 145571194.00 364255270.00 420385472.00 129939336.00 277212514.00 349087643.00 137112994.00 298860031.00 293905934.00 146794105.00 241853152.00 143004043.00 242812053.00 163127359.00 404262247.00 230577444.00 87805538.00 261616714.00 357662401.00 227847144.00 138866064.00 91805858.00 325748773.00 158747072.00 164129590.00 370254169.00 472450349.00 347453841.00 268566861.00 422263177.00 187944907.00 425819656.00 433442217.00 544560889.00 304251991.00 481777988.00 328754102.00 155262970.00 334162196.00
+313369171.00 251983868.00 228958239.00 118589911.00 146945503.00 408336850.00 273847943.00 172238095.00 268329147.00 315651589.00 372655768.00 245340041.00 149493360.00 144933528.00 148183584.00 182179320.00 228166853.00 307079224.00 292820203.00 194080226.00 309223954.00 146886053.00 137978368.00 221727820.00 130638081.00 278548163.00 243059992.00 116407109.00 163580449.00 195269866.00 134229734.00 146490848.00 155493061.00 68722865.00 248258687.00 79799733.00 170992209.00 67496246.00 290639461.00 118041906.00 158776205.00 43704861.00 165437183.00 99421171.00 123913706.00 188409807.00 138492763.00 229093616.00 144331076.00 152803087.00 96956726.00 31455589.00 177488843.00 90549521.00 198345174.00 248611971.00 218738779.00 133715219.00 267377116.00 101856540.00 59983180.00 195577455.00 170206106.00 273678846.00 198662922.00 373004973.00 130107376.00 152165305.00 126188106.00 315568518.00 160315138.00 97426964.00 138749829.00 168672534.00 210819511.00 109926261.00 248366698.00 75253694.00 198445948.00 227952820.00 101228672.00 217024191.00
+407769942.00 620257279.00 569565622.00 348483426.00 407011358.00 714306635.00 440929551.00 454285967.00 421415585.00 559490639.00 707952298.00 329695298.00 420174337.00 173241405.00 429105595.00 582739552.00 479551585.00 354427268.00 482305134.00 532270132.00 596205735.00 237580003.00 391849080.00 288043269.00 557746281.00 518135288.00 478932432.00 253061735.00 389720475.00 348291896.00 368485960.00 379481952.00 264562865.00 381952367.00 455518841.00 239046345.00 246134091.00 191313376.00 396570396.00 311765554.00 288418806.00 124989806.00 248171269.00 208590629.00 306147203.00 311409628.00 212144535.00 424161500.00 250282879.00 207592001.00 265571924.00 253416265.00 267505868.00 167015576.00 193262498.00 281660493.00 305861243.00 277370702.00 355601349.00 149218786.00 234101765.00 352965998.00 207951528.00 298073346.00 186708370.00 494991326.00 166678600.00 263664296.00 302772131.00 556037494.00 268078794.00 235132266.00 278620193.00 336831230.00 343211552.00 322839933.00 455879276.00 319515239.00 464765872.00 385265731.00 155571959.00 341703826.00
+490340336.00 712788066.00 617296985.00 422583882.00 415139030.00 843575902.00 549753014.00 501514744.00 492350224.00 667681174.00 820658393.00 442772833.00 424903527.00 239276437.00 464474627.00 587325462.00 532131764.00 499379728.00 477279075.00 474840671.00 749345901.00 309440360.00 379024841.00 333550839.00 474339903.00 571250150.00 547508719.00 311850033.00 435946655.00 503259549.00 377796075.00 368426805.00 346900391.00 284374906.00 594875174.00 212652130.00 319883348.00 226297081.00 527154071.00 360721794.00 462242816.00 100873377.00 346466229.00 271384995.00 299518786.00 379294062.00 264442681.00 507816200.00 308131017.00 311031376.00 311466805.00 226458755.00 452589833.00 220065661.00 258543762.00 353108503.00 417617250.00 346694905.00 465824282.00 193496573.00 248793717.00 398744193.00 264639871.00 504313869.00 281298164.00 712884115.00 208173007.00 364588502.00 319807582.00 685613622.00 313585819.00 253613287.00 290817018.00 511732216.00 438008284.00 343162445.00 513862906.00 354578183.00 512576259.00 521072670.00 214830837.00 394259877.00
+189753922.00 311539926.00 241585319.00 142605305.00 180245291.00 342499051.00 243647329.00 197254503.00 234903290.00 270344458.00 336340515.00 186566038.00 134359491.00 95279593.00 173243303.00 237636845.00 255290955.00 180814370.00 214559051.00 197127891.00 279603531.00 140481461.00 184193590.00 141541207.00 235548426.00 266499622.00 249629923.00 157232421.00 243025481.00 206917029.00 156401904.00 169640897.00 145446139.00 145639246.00 219300653.00 127125180.00 139813522.00 62962844.00 184594194.00 174558843.00 165787079.00 75275464.00 137094926.00 87489395.00 108676383.00 181512160.00 71788375.00 136465026.00 152754140.00 112420697.00 127767927.00 74753227.00 174376093.00 116346258.00 83731135.00 118538952.00 121335950.00 180830597.00 140098791.00 54642798.00 93834135.00 140651323.00 108559982.00 181474624.00 87795724.00 245434795.00 75831990.00 118385662.00 128705748.00 232117985.00 141415843.00 97174271.00 143754262.00 179594303.00 201591392.00 153978832.00 210544239.00 120896052.00 182759698.00 195648103.00 89905869.00 136613260.00
+348821118.00 387986730.00 339221667.00 210917161.00 237251183.00 515425207.00 361958200.00 268529239.00 302280951.00 437718790.00 519245686.00 306845318.00 215766598.00 160185445.00 234098700.00 338441839.00 311974481.00 326527426.00 302207581.00 270543584.00 436413418.00 198163163.00 236330544.00 223575901.00 264990249.00 364316667.00 319260194.00 189089671.00 269691534.00 288203580.00 222924786.00 211854269.00 226301180.00 140900669.00 348681876.00 102724300.00 193633163.00 111594568.00 322238313.00 183692230.00 263167603.00 47023637.00 206533227.00 146337447.00 148075550.00 220304377.00 154634099.00 279392184.00 176781570.00 190243105.00 156571940.00 83665453.00 269960523.00 125077649.00 178075682.00 230942299.00 251972349.00 190115939.00 286070964.00 114957882.00 112828758.00 221704943.00 169078416.00 327459720.00 193359222.00 438768933.00 130374978.00 207503999.00 162629298.00 386091010.00 180657020.00 129023130.00 157043579.00 284167206.00 255707365.00 166664837.00 285622318.00 160032372.00 263265614.00 299549780.00 127399546.00 229429651.00
+135492236.00 314447791.00 224578832.00 131608649.00 173938971.00 301670856.00 217905736.00 188251458.00 228385817.00 225153603.00 291123070.00 153637655.00 111472835.00 76466253.00 166187529.00 218666647.00 257501008.00 134950110.00 191332318.00 180449174.00 243623019.00 131249064.00 179561461.00 116724077.00 244911258.00 249725186.00 245630054.00 162373591.00 259060363.00 198990234.00 143336245.00 167166380.00 127039907.00 159750725.00 189012758.00 150021211.00 131163071.00 49673279.00 143138849.00 191739577.00 148176533.00 94435643.00 123009880.00 72891005.00 100728354.00 183966088.00 42064477.00 87396418.00 159286678.00 92191566.00 131005644.00 79144293.00 158122744.00 126860847.00 47909165.00 77633500.00 76937057.00 198803370.00 89103080.00 33564999.00 96969773.00 118153076.00 91774087.00 140459121.00 49212486.00 188819094.00 58434419.00 94321018.00 126903921.00 189453835.00 138448864.00 93353380.00 151725323.00 160518099.00 200515038.00 165869498.00 198232911.00 119717284.00 166701427.00 173875162.00 84209657.00 107625715.00
+235364228.00 567740392.00 393209931.00 276151206.00 298396214.00 534820516.00 414086247.00 339025722.00 362045519.00 441945184.00 547472978.00 309605303.00 178585018.00 144232345.00 292594876.00 402414452.00 432961480.00 257197496.00 238642175.00 247153610.00 490324484.00 253814888.00 306023305.00 169231097.00 378277938.00 420943991.00 416782676.00 310129731.00 462916868.00 421740150.00 256699975.00 259196183.00 267809940.00 207135635.00 393679563.00 202343932.00 227461203.00 108950731.00 266642656.00 333724137.00 372628700.00 116507656.00 244215858.00 159328063.00 132239159.00 303632731.00 80714533.00 170276814.00 268773723.00 202480046.00 241325444.00 118902725.00 385926961.00 229056938.00 67647553.00 107468686.00 169164043.00 351538981.00 168330961.00 68321267.00 171167600.00 183233323.00 143277571.00 334431511.00 99184554.00 400554431.00 91037901.00 213067259.00 195264718.00 350157515.00 218403334.00 149545660.00 217083829.00 395555463.00 350539793.00 270419706.00 307357113.00 233728167.00 277101513.00 351020217.00 162779146.00 160761094.00
+499280216.00 526798549.00 464351274.00 234269119.00 322496453.00 727714884.00 475799840.00 357096466.00 498295219.00 545336517.00 670522184.00 392044467.00 305834351.00 226589465.00 318328193.00 406182709.00 466947172.00 466364786.00 552788984.00 433723980.00 540026723.00 257380356.00 314810889.00 374692469.00 384519324.00 531463302.00 476506436.00 236721059.00 365035235.00 336224764.00 283592509.00 326016162.00 262346347.00 252519339.00 420885026.00 224123957.00 296709117.00 123971383.00 460320093.00 271359795.00 244576575.00 133323599.00 273356954.00 168738273.00 261191202.00 357213968.00 213972165.00 372355454.00 281141840.00 233468534.00 208287930.00 124611569.00 267921490.00 182626227.00 292472879.00 384658418.00 325752087.00 283118224.00 406375476.00 155085391.00 151161977.00 350451926.00 280211011.00 387636941.00 278723034.00 567506104.00 210228415.00 241195574.00 265422323.00 536568601.00 301350426.00 200259190.00 294773957.00 269488221.00 387444254.00 262341120.00 469543069.00 183636542.00 389941831.00 383541418.00 172483357.00 370877735.00
+284083172.00 314516361.00 345328136.00 198628199.00 223167145.00 435443956.00 218163749.00 263397810.00 249795042.00 303239665.00 392764839.00 168879121.00 311212934.00 109622019.00 265742790.00 313598115.00 246742318.00 252560666.00 359625484.00 363547997.00 339203386.00 105855062.00 189395485.00 212879881.00 291486627.00 282114117.00 262275363.00 83045679.00 125495072.00 143365567.00 203077341.00 222082992.00 116637308.00 228732844.00 253656703.00 132119685.00 145623472.00 131145617.00 285479872.00 141260560.00 104907031.00 66467928.00 136690967.00 128433191.00 237356647.00 171312419.00 179265359.00 343772416.00 123932468.00 117509918.00 139813471.00 175965129.00 83955566.00 56688802.00 182583396.00 253384509.00 235745864.00 104996244.00 291915043.00 121215553.00 138436872.00 268677948.00 152994787.00 157694155.00 160131776.00 323296308.00 132729413.00 161953177.00 203408333.00 392398800.00 168336527.00 158542321.00 174919272.00 139015330.00 180845225.00 181008541.00 312174654.00 186464332.00 323031717.00 219627705.00 80577694.00 274302878.00
+237239798.00 562280518.00 527680900.00 377489752.00 343402124.00 565605264.00 279717246.00 433204506.00 315774544.00 376687776.00 515611310.00 181142242.00 444038856.00 111913676.00 443592876.00 490942246.00 380134874.00 256374276.00 365185460.00 463543342.00 519532704.00 156767826.00 276959988.00 194609080.00 459858972.00 358831602.00 392108082.00 176527434.00 252220794.00 299964706.00 300389836.00 315267550.00 170616642.00 351245560.00 394394130.00 222897112.00 194330120.00 218248148.00 335599718.00 297832354.00 262087328.00 111549350.00 206034472.00 213048398.00 325771056.00 254866510.00 206277442.00 441826516.00 204351322.00 168732066.00 271491150.00 318122442.00 214283620.00 131207142.00 136051970.00 220518844.00 278692916.00 233744496.00 314550848.00 140601576.00 263843984.00 341919500.00 155699320.00 204909384.00 126810552.00 409809912.00 135941924.00 251582158.00 308008014.00 534731302.00 229426354.00 242265262.00 251749964.00 321859530.00 280750614.00 330592448.00 422934438.00 371152606.00 483844660.00 346382500.00 127366856.00 316088266.00
+427716343.00 669729557.00 539500255.00 288120662.00 422821040.00 743343262.00 529938420.00 432983785.00 506685421.00 605318710.00 754677783.00 396909354.00 309317102.00 193484083.00 377860446.00 572014467.00 566414779.00 354756322.00 507753615.00 499039287.00 579777220.00 296517587.00 453089021.00 312840797.00 604745316.00 608085208.00 543501747.00 338961948.00 548597081.00 397790769.00 372132083.00 404786472.00 310237929.00 389915757.00 444910246.00 295316106.00 283939953.00 126826199.00 365237029.00 366689034.00 297411116.00 176738085.00 267331478.00 170377042.00 247586105.00 378233106.00 143234530.00 276852704.00 317057864.00 210673765.00 264959309.00 176521894.00 312393473.00 236375123.00 167377122.00 243807696.00 231053395.00 372553391.00 275675815.00 106864797.00 202058572.00 299536899.00 223146269.00 325064697.00 163811754.00 465944985.00 155864725.00 224851330.00 281175639.00 470952750.00 298752265.00 210078941.00 316568925.00 327722496.00 411968416.00 333663618.00 449747920.00 253458746.00 390640993.00 383000149.00 177023846.00 289228461.00
+313149586.00 875079064.00 718859217.00 423029999.00 530273113.00 810335307.00 468271504.00 591224591.00 588120121.00 527008536.00 740655196.00 278735574.00 499427302.00 154659997.00 575340744.00 687434949.00 686210413.00 292068982.00 621146723.00 689223754.00 641466126.00 273088431.00 501637312.00 312853801.00 812037351.00 640581663.00 661000804.00 354533639.00 590852402.00 422753690.00 435589534.00 526849199.00 251248656.00 618184179.00 471949120.00 474924294.00 316730257.00 202634316.00 377541681.00 523850632.00 272127749.00 291421293.00 277972737.00 216530023.00 428233622.00 468507905.00 169059583.00 381392084.00 393985032.00 185770129.00 387951182.00 392428517.00 250959225.00 282398249.00 129223884.00 240461469.00 223552915.00 475516285.00 278509704.00 115651726.00 347948414.00 420150789.00 234764960.00 197948992.00 91168490.00 421684515.00 169069906.00 244844907.00 441032156.00 598626216.00 385325146.00 327811568.00 462324645.00 334086016.00 488483437.00 526186543.00 622016900.00 438069554.00 603182198.00 430433660.00 189649082.00 377953355.00
+142665154.00 450257987.00 385876346.00 284990766.00 255150818.00 413195487.00 218925513.00 324487279.00 249318543.00 269844279.00 374186556.00 136859198.00 298346239.00 81138065.00 327727469.00 353421380.00 305631557.00 176404964.00 243326214.00 311140946.00 388790477.00 131338911.00 208121620.00 129211765.00 340576491.00 271870754.00 309362626.00 161222379.00 233158641.00 259621330.00 216409436.00 232196624.00 135710439.00 253711769.00 298183771.00 184895265.00 154947809.00 152730000.00 233600570.00 255635404.00 224998946.00 98623624.00 164272131.00 156574709.00 224540457.00 211725966.00 128526751.00 284787072.00 176861967.00 130696073.00 216963330.00 227963237.00 195936308.00 127103142.00 74211004.00 131153487.00 181748381.00 216978142.00 198893135.00 89408866.00 200787883.00 234735106.00 110581724.00 164059202.00 73473246.00 296630542.00 90175152.00 184906194.00 227544731.00 376310660.00 178576552.00 177456092.00 198138439.00 266848704.00 234825386.00 262970195.00 311333638.00 279725979.00 346884392.00 268679429.00 105024633.00 209801952.00
+493441851.00 795892838.00 615630778.00 351743715.00 482543143.00 869069914.00 647567720.00 501446069.00 582570994.00 730973107.00 897365204.00 495551718.00 324029530.00 235919763.00 428359756.00 659033270.00 660002617.00 429215052.00 530468226.00 518586826.00 708309974.00 369258113.00 520414251.00 345868315.00 662123637.00 705618208.00 633879230.00 423572478.00 666381437.00 520949194.00 427696127.00 447443675.00 393569105.00 398076168.00 553603512.00 315936319.00 338644096.00 148602763.00 432346873.00 436926943.00 421092175.00 185236465.00 335087379.00 211329800.00 248830459.00 443837124.00 158732006.00 305305478.00 377409759.00 273665241.00 316021180.00 176306332.00 443724784.00 294279043.00 182175235.00 261414103.00 278177786.00 455923688.00 315736999.00 123005529.00 229192144.00 324530530.00 253927299.00 443670899.00 197232524.00 585286892.00 173685967.00 285635882.00 306368130.00 545459165.00 340223834.00 231044334.00 346313782.00 453416389.00 495116622.00 377907277.00 499114019.00 296275085.00 431265623.00 477000323.00 221161122.00 310707045.00
+195602027.00 477219554.00 332519466.00 127733931.00 260838599.00 458626486.00 291390114.00 269482329.00 444387168.00 249469231.00 366852698.00 177647630.00 168307348.00 111357127.00 246967154.00 256923562.00 443149265.00 194472764.00 443852110.00 344125132.00 277342992.00 176932337.00 264223215.00 242657843.00 412902039.00 410467922.00 419507972.00 225216566.00 403353235.00 226009920.00 186478451.00 298906227.00 124435271.00 329832722.00 198703242.00 345756539.00 230599838.00 32023587.00 210187567.00 328001237.00 72805695.00 240461627.00 165002161.00 62556252.00 218825157.00 347813454.00 45477666.00 86282642.00 293466607.00 92514629.00 194675262.00 137349868.00 105260796.00 213662937.00 104880233.00 170360657.00 61695348.00 342216428.00 116185237.00 33118185.00 146643730.00 220339490.00 185458807.00 109270267.00 62962504.00 205177576.00 114213607.00 74438580.00 243796242.00 267307711.00 273114396.00 168163588.00 332510228.00 86188643.00 348342272.00 302583707.00 387220761.00 139901633.00 278561391.00 216352665.00 121220584.00 211231587.00
+236306959.00 914787023.00 697857653.00 458514353.00 465832293.00 802585583.00 427540931.00 590790894.00 640243989.00 416197514.00 630908645.00 243703113.00 478642296.00 170799439.00 593627936.00 533105344.00 691286796.00 350440480.00 591965267.00 572322459.00 660973264.00 274072954.00 375520402.00 316742901.00 639048837.00 578251304.00 686919191.00 350792378.00 549676887.00 508223857.00 349472144.00 473893182.00 218765353.00 516676851.00 499973269.00 507808412.00 374506989.00 215058422.00 444629312.00 591387387.00 343546855.00 320210840.00 334439781.00 244036580.00 451277236.00 543028976.00 186113654.00 408928842.00 458371161.00 232667044.00 431770255.00 399025168.00 332396561.00 335288152.00 159175175.00 279969767.00 261736109.00 554079587.00 321800486.00 130772326.00 372610396.00 460110125.00 277647656.00 281976596.00 126034326.00 517683073.00 195775728.00 286191838.00 478806335.00 670918465.00 439154381.00 355506041.00 514151603.00 406783071.00 572476768.00 577017483.00 692520201.00 467431125.00 652354692.00 505461972.00 227511488.00 417886400.00
+518698251.00 555626554.00 468357395.00 258455392.00 366335654.00 732782497.00 566559684.00 367652726.00 434770867.00 680711737.00 793862752.00 475873444.00 253018140.00 224664538.00 296624124.00 535932159.00 474825608.00 426193386.00 428175933.00 400334832.00 599367424.00 307171730.00 412470989.00 312386654.00 463286190.00 574092579.00 464991646.00 312915173.00 476274337.00 401671152.00 349979791.00 326639852.00 356046443.00 237655615.00 476191604.00 152809899.00 262669013.00 122160737.00 402222412.00 259214033.00 357641346.00 74907120.00 276363362.00 177928899.00 162501147.00 306720529.00 172015581.00 303651150.00 252172505.00 250467780.00 204188802.00 77596037.00 379130885.00 189272058.00 213948321.00 275484474.00 297839685.00 283146721.00 336016009.00 131877293.00 134612606.00 260745567.00 219478173.00 440914781.00 238708870.00 559638315.00 160764267.00 257959981.00 198077866.00 465237507.00 240802080.00 155043066.00 210698307.00 378158339.00 355351875.00 217811870.00 359533529.00 185926269.00 308918711.00 390350129.00 174004392.00 269712274.00
+103644787.00 245685664.00 223874071.00 144819458.00 138840304.00 253046661.00 110697389.00 181749166.00 176953156.00 130196739.00 195160033.00 65839678.00 190457099.00 54403144.00 191016181.00 169575567.00 180943598.00 127465454.00 208089983.00 208189391.00 204974035.00 63949272.00 100892197.00 112244610.00 183883719.00 161481138.00 188426219.00 68505333.00 104159946.00 118963325.00 110278015.00 142945260.00 52896872.00 159854446.00 152582321.00 131949329.00 104318934.00 83398771.00 161522591.00 144466400.00 78479824.00 78173913.00 93306377.00 82735389.00 164203556.00 141723952.00 91574183.00 188432428.00 112197683.00 69283436.00 119612381.00 139132545.00 65422719.00 68544785.00 82254816.00 127316819.00 117801732.00 120439431.00 147098264.00 61549527.00 114179669.00 169812003.00 92298665.00 78390767.00 65854256.00 177910589.00 74637461.00 97234664.00 153003762.00 242139312.00 126974879.00 116183951.00 145736280.00 102469498.00 147299378.00 161092353.00 221178040.00 147931753.00 224372273.00 149251916.00 59609409.00 162882289.00
+364936147.00 725079576.00 658800399.00 450603326.00 473090464.00 746750997.00 457649452.00 538933190.00 396128265.00 606264807.00 773545012.00 324798090.00 493601458.00 156160312.00 517163222.00 711796585.00 515012460.00 316133134.00 429414717.00 581470172.00 683815334.00 251693598.00 449907359.00 239631292.00 663278742.00 533240403.00 509525362.00 293324055.00 439959231.00 412696532.00 433424169.00 417602608.00 296251969.00 447212133.00 523683352.00 248919569.00 236314631.00 245271367.00 386426922.00 364735523.00 377668672.00 117643394.00 262891838.00 253906145.00 331012567.00 306982629.00 219025067.00 471856770.00 253850909.00 221385412.00 323369050.00 332604555.00 331422961.00 180756772.00 136282859.00 222407966.00 317296115.00 306977025.00 342755769.00 153730251.00 297439704.00 363131411.00 173610707.00 299451223.00 144745018.00 506193835.00 145881249.00 307925069.00 333933324.00 601725049.00 261511328.00 264379994.00 275328941.00 441921017.00 348731203.00 376466870.00 463680647.00 425000181.00 527534813.00 429578165.00 164374634.00 330280524.00
+494706970.00 934347017.00 762345705.00 456268995.00 538575265.00 992191148.00 616932039.00 620986446.00 698739190.00 687106307.00 903428002.00 441040678.00 504060509.00 251163488.00 585483077.00 686358133.00 746388374.00 501846274.00 702128923.00 667367386.00 796267219.00 356470246.00 502044176.00 422723692.00 723581136.00 739015405.00 740435332.00 401545074.00 627901129.00 549295926.00 450613418.00 528053959.00 346457769.00 515118766.00 610979181.00 440316743.00 408529488.00 222198272.00 554298167.00 538797474.00 405331153.00 264945953.00 381907194.00 268426448.00 428602855.00 546272483.00 246213638.00 488355048.00 451685025.00 297761038.00 405884566.00 329801614.00 407379155.00 322505563.00 259967966.00 386465558.00 368214374.00 520590101.00 443779019.00 177073516.00 332710297.00 490648133.00 330076916.00 431625170.00 241532028.00 681957343.00 240960786.00 342191461.00 454249829.00 750050038.00 446096612.00 341755358.00 482772950.00 462376134.00 589170283.00 519336300.00 702102180.00 423907431.00 644724390.00 563675553.00 250456715.00 471966047.00
+474591731.00 672824560.00 542712257.00 232098798.00 423005912.00 788710249.00 532830110.00 423961126.00 608718335.00 574108783.00 737355908.00 392055328.00 314720418.00 213215854.00 373044378.00 515594933.00 617727384.00 398535526.00 660719879.00 561057532.00 537963466.00 295115570.00 449515753.00 397096938.00 621262962.00 658619609.00 595188838.00 326019329.00 556966507.00 353674452.00 353488855.00 443397778.00 276186901.00 439956115.00 402485282.00 377640665.00 327594661.00 95994573.00 402851858.00 389223233.00 194062164.00 245357170.00 269763178.00 141616763.00 303201041.00 445492475.00 150937089.00 271048678.00 365361427.00 195696724.00 259342526.00 174490129.00 227841703.00 254768864.00 230972233.00 328512746.00 224266289.00 403659551.00 305615591.00 109426569.00 194104004.00 351877141.00 284042257.00 290992869.00 194517342.00 459773013.00 195696083.00 189772443.00 323845896.00 490895795.00 361092696.00 233514670.00 400531903.00 218819235.00 463277317.00 366275770.00 536875381.00 210863779.00 420117879.00 369785043.00 182447682.00 354630344.00
+482156472.00 610527788.00 587154302.00 311250500.00 439404212.00 757059324.00 475297118.00 455003376.00 454245814.00 612789924.00 767909608.00 358765454.00 435246484.00 183634094.00 421423832.00 631375288.00 507096972.00 366794928.00 574264622.00 615456744.00 584125856.00 244278276.00 450188250.00 335072534.00 640133316.00 580176994.00 498766804.00 253433946.00 416397216.00 300493912.00 402926678.00 423194422.00 273241016.00 444566462.00 437201902.00 258738788.00 247776742.00 174462646.00 399614316.00 292749286.00 220860368.00 140624060.00 232880396.00 188344066.00 322412822.00 314829370.00 215763478.00 420782116.00 247814234.00 189490608.00 245270492.00 245590198.00 205495306.00 154417328.00 220540406.00 315857372.00 299336878.00 259297082.00 365421162.00 149587118.00 218878048.00 366102302.00 224675454.00 264753798.00 198400484.00 472300126.00 179346266.00 238272746.00 307129312.00 547473490.00 277505032.00 235248540.00 295302866.00 266056930.00 337075014.00 314656060.00 471521982.00 287047738.00 461319858.00 357480306.00 146166804.00 362774608.00
+658457956.00 779466098.00 690751781.00 403929837.00 507111459.00 995357509.00 695154175.00 544515463.00 588846026.00 852217744.00 1024084865.00 567992254.00 446330425.00 286121033.00 477526665.00 730142775.00 637019643.00 568648006.00 623738297.00 609513517.00 820757713.00 375405257.00 524204592.00 425387427.00 643312176.00 739236006.00 636243341.00 377102491.00 568202529.00 517252931.00 473438942.00 462576589.00 427983359.00 379513282.00 643839099.00 246202254.00 356328534.00 211035842.00 572189692.00 372863415.00 450693815.00 123042534.00 368780816.00 266149825.00 310744607.00 422942004.00 275525233.00 510796946.00 341166494.00 327884101.00 309689213.00 201549001.00 456559835.00 239541488.00 306164283.00 409638342.00 436601734.00 372697835.00 501789343.00 202368900.00 236449249.00 424193889.00 306762728.00 542094918.00 321533388.00 759254013.00 235616176.00 366343714.00 332409300.00 711606453.00 349071589.00 259923593.00 325770198.00 494795247.00 480623032.00 350149266.00 556976131.00 325572170.00 519810820.00 540397999.00 230112047.00 429995538.00
+499937684.00 782176549.00 729669553.00 461448339.00 456790565.00 927204406.00 479180215.00 581459282.00 603443312.00 581186569.00 780216884.00 352926648.00 596658647.00 240140446.00 585787895.00 584433983.00 595240286.00 541773318.00 704907083.00 661350840.00 753569721.00 264519650.00 358582768.00 428481574.00 553862034.00 596540999.00 626658990.00 249100498.00 361008705.00 437755152.00 386088802.00 455491461.00 257489021.00 437352516.00 576545797.00 351691857.00 368937590.00 270245384.00 615129969.00 422317852.00 331191985.00 197423695.00 349767032.00 288782496.00 489649721.00 461511609.00 340172198.00 660302588.00 359726213.00 289077990.00 362575004.00 370472754.00 304718671.00 218214725.00 347179912.00 492696744.00 470609520.00 368474865.00 573160497.00 235398148.00 326585867.00 560051989.00 340948432.00 406584482.00 314167128.00 727869715.00 275933866.00 366778843.00 460172921.00 840065636.00 411957650.00 354094840.00 433654756.00 400580424.00 495339657.00 461903306.00 708440822.00 432011879.00 700060734.00 539686215.00 217351553.00 558174729.00
+293570473.00 621458870.00 516716928.00 282100253.00 406707277.00 614446926.00 400801987.00 418434179.00 421375751.00 470233041.00 618850381.00 264133644.00 334697743.00 125302315.00 387033343.00 556199444.00 506831429.00 220759900.00 453615538.00 515536533.00 478353139.00 224015109.00 423306561.00 237579289.00 636327996.00 514207209.00 478950211.00 282909262.00 477519910.00 304594211.00 350973809.00 394813887.00 227387630.00 451633263.00 353362939.00 313588561.00 220533717.00 130243451.00 262946076.00 351116580.00 204814353.00 189060862.00 197637016.00 146391786.00 269843040.00 320218849.00 111523560.00 246271768.00 270314893.00 137464039.00 257639151.00 241066132.00 196599788.00 197568006.00 92588680.00 164392102.00 156088653.00 327262796.00 191104218.00 78159845.00 223613857.00 274020784.00 162890525.00 164880559.00 73038750.00 306075296.00 115370075.00 171021979.00 285424852.00 400053644.00 259421121.00 212232311.00 304219951.00 243183318.00 337706431.00 343748814.00 410854172.00 281668453.00 390144347.00 300120542.00 134319581.00 248205292.00
+573908153.00 834046576.00 719407818.00 389502997.00 511753845.00 985741876.00 613250547.00 568957057.00 684781383.00 703677103.00 905680369.00 459363962.00 491847221.00 263584991.00 529906821.00 655852928.00 699652643.00 533509996.00 754584580.00 684232973.00 748953241.00 338771399.00 491060771.00 463078933.00 688895970.00 738068059.00 698152239.00 353766246.00 564395816.00 469576067.00 437861119.00 513307577.00 334773276.00 491341619.00 570865807.00 398185019.00 393051649.00 199442241.00 566991416.00 458253014.00 326198541.00 239627950.00 356236414.00 242344478.00 418313900.00 509538539.00 264836484.00 500057860.00 410631421.00 282526801.00 348362603.00 283709620.00 335092798.00 275664926.00 314259754.00 444046268.00 385617041.00 444686114.00 481016606.00 188282199.00 283856603.00 491987098.00 345710155.00 419416953.00 284627046.00 677744922.00 257923733.00 317451885.00 424146210.00 732409346.00 427814469.00 318313855.00 455375203.00 375864444.00 543803965.00 455262196.00 679928266.00 352615765.00 606202365.00 519071382.00 230293551.00 491899400.00
+487918706.00 529705490.00 505146685.00 266420296.00 394476320.00 696685038.00 489201117.00 389196330.00 389071865.00 633580344.00 758733752.00 393294625.00 342941922.00 184003427.00 338484100.00 594515148.00 447100548.00 354524616.00 471746197.00 512663916.00 553121860.00 251095752.00 433017677.00 297544327.00 560630940.00 546777027.00 435488982.00 256277915.00 410244050.00 300116716.00 377858279.00 362800379.00 299646926.00 346759801.00 423197229.00 174588656.00 217282261.00 144687343.00 360383228.00 232329123.00 252709770.00 84668580.00 220500164.00 169701355.00 227124679.00 260383479.00 185767821.00 351136458.00 206681609.00 193184466.00 198735550.00 159653537.00 247699419.00 137002678.00 197158035.00 269063948.00 279177541.00 219391003.00 326399669.00 133158799.00 163189264.00 288380685.00 192847699.00 304808559.00 197438614.00 460994177.00 152444997.00 227012147.00 228082400.00 465167385.00 222528084.00 177930394.00 215844507.00 285634649.00 291117597.00 233285992.00 368657319.00 223136565.00 356269513.00 330339313.00 136665362.00 290591130.00
+337402323.00 272038947.00 280484021.00 122961572.00 189669982.00 441036542.00 264848395.00 205308189.00 291496824.00 324330548.00 399057740.00 224258610.00 217832065.00 137335259.00 188848415.00 242663447.00 255479265.00 294670270.00 382206611.00 304740666.00 305094367.00 132463585.00 181699659.00 250645227.00 231701049.00 313292577.00 266909040.00 101316070.00 162201998.00 145754778.00 171314685.00 200712054.00 136507610.00 167248782.00 232353017.00 124068036.00 168211292.00 78607219.00 292715224.00 123537967.00 89273658.00 72234766.00 146617705.00 95757718.00 183702028.00 194358315.00 154815690.00 267261778.00 143613052.00 126861961.00 103836712.00 84167968.00 98202369.00 75525622.00 211865767.00 276232845.00 217718668.00 120881939.00 282044044.00 108256945.00 82611099.00 236555401.00 179516211.00 204726845.00 190771488.00 337859941.00 141854165.00 136918631.00 164930579.00 341355389.00 177506244.00 124725378.00 174536728.00 106123377.00 204592669.00 140117969.00 293301861.00 96912136.00 248810713.00 208298134.00 89372851.00 257005008.00
+212684614.00 724462176.00 536095636.00 325086927.00 346087257.00 663774781.00 343308330.00 450214535.00 584348175.00 295690072.00 469946051.00 198042267.00 358575837.00 158254406.00 454870383.00 340012361.00 577187757.00 330306474.00 552319240.00 447092507.00 501449911.00 223159739.00 263227397.00 308865832.00 457772796.00 478591701.00 578892805.00 272610092.00 435002893.00 399793421.00 239883513.00 378386722.00 153254531.00 395651223.00 378019166.00 449410058.00 339897711.00 146275629.00 395200664.00 489815464.00 231213247.00 296227774.00 283331284.00 178513918.00 381766380.00 488650371.00 153928016.00 316226144.00 407666803.00 191767017.00 340375437.00 294973292.00 241506724.00 290576862.00 178943140.00 287489198.00 214242175.00 474996580.00 285666410.00 108317315.00 283343475.00 397722808.00 271104083.00 240351209.00 136649002.00 439636080.00 187228957.00 214660713.00 402559012.00 552930392.00 396521243.00 293474669.00 463559029.00 274845494.00 506125029.00 475501758.00 609352928.00 333622643.00 529248445.00 410750950.00 194607343.00 375608376.00
+</pre></div></section>
+
+</div>
+</article>
+<article class="problem" id="problema-C" data-letter="C" data-title="Cálculo Paralelo de PI usando OpenMP">
+<div class="statement-content">
+<h1 class="moj-title"><span class="prob-letter" aria-hidden="true">C</span><span class="visually-hidden">Problema C: </span>Cálculo Paralelo de PI usando OpenMP</h1>
+<p>O número
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
+pode ser aproximado por diferentes métodos numéricos. Um interessante
+método de aproximação é utilizar a integral:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><mfrac><mn>4</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup></mrow></mfrac><mspace width="0.167em"></mspace><mi>d</mi><mi>x</mi><mo>=</mo><mn>4</mn><mrow><mo stretchy="true" form="prefix">[</mo><mo>arctan</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>arctan</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>π</mi><mn>4</mn></mfrac><mo>−</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>π</mi></mrow><annotation encoding="application/x-tex">\int_{0}^{1} \frac{4}{1+x^2} \, dx = 4 [\arctan(1) - \arctan(0)] = 4 \left( \frac{\pi}{4} - 0 \right) = \pi</annotation></semantics></math></p>
+<p>Neste exercício, faça um programa que recebe o número de quadrados
+que essa integral irá ser dividida e retorne o valor aproximado de
+pi.</p>
+<p>Por exemplo, considerando a divisão em
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">N = 2</annotation></semantics></math>
+quadrados, a largura
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+de cada quadrado:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">L = \frac{1}{2} = 0.5</annotation></semantics></math></p>
+<p>Para a aproximação, é necessário usar os valores médios de
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.
+O primeiro quadrado possui:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>+</mo><mn>0</mn><mo>,</mo><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mi>L</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>25</mn></mrow><annotation encoding="application/x-tex">x_{1} = (0 + 0,5) * L = 0,25</annotation></semantics></math></p>
+<p>Aplicando a fórmula da integral acima, temos
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_{1}</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mn>4</mn><mo>,</mo><mn>0</mn></mrow><mrow><mn>1</mn><mo>,</mo><mn>0</mn><mo>+</mo><msub><mi>x</mi><mn>1</mn></msub><mo>*</mo><msub><mi>x</mi><mn>1</mn></msub></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>4</mn><mo>,</mo><mn>0</mn></mrow><mrow><mn>1</mn><mo>,</mo><mn>0</mn><mo>+</mo><mn>0</mn><mo>,</mo><mn>25</mn><mo>*</mo><mn>0</mn><mo>,</mo><mn>25</mn></mrow></mfrac><mo>=</mo><mn>3</mn><mo>,</mo><mn>7647058824</mn></mrow><annotation encoding="application/x-tex">S_{1} = \frac{4,0}{1,0 + x_{1}*x_{1}} = \frac{4,0}{1,0 + 0,25*0,25}= 3,7647058824</annotation></semantics></math></p>
+<p>O segundo quadrado possui:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mn>0</mn><mo>,</mo><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mi>L</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>75</mn></mrow><annotation encoding="application/x-tex">x_{2} = (1 + 0,5) * L = 0,75</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><mn>4</mn><mo>,</mo><mn>0</mn></mrow><mrow><mn>1</mn><mo>,</mo><mn>0</mn><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>*</mo><msub><mi>x</mi><mn>2</mn></msub></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>4</mn><mo>,</mo><mn>0</mn></mrow><mrow><mn>1</mn><mo>,</mo><mn>0</mn><mo>+</mo><mn>0</mn><mo>,</mo><mn>75</mn><mo>*</mo><mn>0</mn><mo>,</mo><mn>75</mn></mrow></mfrac><mo>=</mo><mn>2</mn><mo>,</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">S_{2} = \frac{4,0}{1,0 + x_{2}*x_{2}} = \frac{4,0}{1,0 + 0,75*0,75}= 2,56</annotation></semantics></math></p>
+<p>Finalmente, temos o valor aproximado de pi, somando a área dos
+quadrados:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>≈</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>+</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mi>L</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo>,</mo><mn>7647058824</mn><mo>+</mo><mn>2</mn><mo>,</mo><mn>56</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mn>0</mn><mo>,</mo><mn>5</mn><mo>=</mo><mn>6</mn><mo>,</mo><mn>3247058824</mn><mo>*</mo><mn>0</mn><mo>,</mo><mn>5</mn><mo>=</mo><mn>3</mn><mo>,</mo><mn>1623529412</mn></mrow><annotation encoding="application/x-tex">\pi \approx (S_{1} + S_{2}) * L = (3,7647058824 + 2,56) * 0,5 = 6,3247058824 * 0,5 = 3,1623529412</annotation></semantics></math></p>
+<p>Um valor muito mal aproximado (afinal, só usamos 2 termos). Neste
+exercício, iremos calcular o valor de pi com uma precisão melhor. Mas
+como essa integral converge lentamente, temos que usar o paralelismo.
+Você deverá desenvolver um programa utilizando OpenMP para calcular uma
+aproximação de
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
+de forma paralela, distribuindo o trabalho entre múltipla threads.</p>
+<h2 id="C-entrada">Entrada</h2>
+<p>A entrada possui o número N de retângulos que a região entre 0 a 1
+será divida
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>≤</mo><mi>N</mi><mo>≤</mo><msup><mn>10</mn><mn>10</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2 \leq N \leq 10^10)</annotation></semantics></math>.</p>
+<h2 id="C-saída">Saída</h2>
+<p>A saída deve possuir o número de aproximado de PI, com 10 casas
+decimais.</p>
+<h2 id="C-restrições">Restrições</h2>
+<ul>
+<li>É obrigatório o uso do OpenMP para a paralelização entre múltiplas
+threads.</li>
+<li>A quantidade que o programa será dividido pode ser maior que 2
+bilhões. Use inteiros de 64 bits.</li>
+<li>Para os valores com frações, utilize variáveis de precisão
+dupla.</li>
+</ul>
+<section class="moj-exemplos"><h2>Exemplos</h2><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 1 do problema C">Copiar</button></h3><pre data-sample="sample1" data-kind="input">1235
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 1 do problema C">Copiar</button></h3><pre data-sample="sample1" data-kind="output">3.1415927082
+</pre></div><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 2 do problema C">Copiar</button></h3><pre data-sample="sample2" data-kind="input">10000000000
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 2 do problema C">Copiar</button></h3><pre data-sample="sample2" data-kind="output">3.1415926536
+</pre></div></section>
+
+</div>
+</article>
+<article class="problem" id="problema-D" data-letter="D" data-title="Parallel Prime Sum">
+<div class="statement-content">
+<h1 class="moj-title"><span class="prob-letter" aria-hidden="true">D</span><span class="visually-hidden">Problema D: </span>Parallel Prime Sum</h1>
+<p>O estudo formal dos números primos começou na Grécia Antiga, por
+volta do século VI a.C. A Escola Pitagórica (c.&nbsp;530 a.C.) trouxe as
+primeiras noções sobre números primos e compostos, atreladas ao
+misticismo e à base da matemática na época. Euclides, fez um dos
+principais avanços na época, formalizando o conceito de número primo e
+traz a primeira prova matemática de que a quantidade de números primos
+não tem fim. Ao longo dos séculos, diversos matemáticos continuaram o
+estudo dos números primos, Pierre de Fermat (século XVII) e Carl
+Friedrich Gauss (século XIX) os estudaram e aprofundaram a teoria dos
+números.</p>
+<p>Apesar de ser um conceito antigo, eles são importantes na era
+moderna. Uma das principais utilidades para números primos é utilizá-los
+na criptografia e segurança moderna. O fato de multiplicar dois números
+primos gigantes é fácil, mas descobrir quais foram esses números a
+partir do resultado é um processo extremamente lento para computadores
+comuns. Isso garante a privacidade de dados na Internet. Além da
+criptografia, a busca por primos maiores impulsiona a melhoria de
+processadores, enquanto o cálculo rápido de fatores primos é usado para
+resolver problemas complexos de redes, tabelas de dispersão (hash) e
+algoritmos de machine learning.</p>
+<p>Neste problema, você deve criar um programa de computador que irá
+receber diversos números inteiros muito grandes. Você deve então decidir
+se eles são primos, ou não, e efetuar a soma dos números apenas dos
+números primos, imprimindo o resultado no final.</p>
+<h2 id="D-entrada">Entrada</h2>
+<p>A primeira linha é composta por 1 número inteiro:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>≤</mo><mi>N</mi><mo>≤</mo><mn>100</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1 \leq N \leq 100)</annotation></semantics></math>.
+Depois,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+números inteiros,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+são informados
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msup><mn>2</mn><mn>64</mn></msup><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2 \leq j \leq 2^64-1)</annotation></semantics></math>.</p>
+<h2 id="D-saída">Saída</h2>
+<p>Seu programa deve imprimir a soma de todos os números primos do
+vetor.</p>
+<h2 id="D-restrições">Restrições</h2>
+<p>Seu programa deve ser construído em OpenMP e deve usar o paralelismo
+para poder executar em tempo hábil.</p>
+<section class="moj-exemplos"><h2>Exemplos</h2><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 1 do problema D">Copiar</button></h3><pre data-sample="sample1" data-kind="input">10
+2 3 4 5 6 7 8 9 10 11
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 1 do problema D">Copiar</button></h3><pre data-sample="sample1" data-kind="output">28
+</pre></div></section>
+
+</div>
+</article>
+<article class="problem" id="problema-E" data-letter="E" data-title="Cálculo Paralelo de PI usando OpenMP e o método de Gregory-Leibniz">
+<div class="statement-content">
+<h1 class="moj-title"><span class="prob-letter" aria-hidden="true">E</span><span class="visually-hidden">Problema E: </span>Cálculo Paralelo de PI usando OpenMP e o método de Gregory-Leibniz</h1>
+<p>O número
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
+pode ser aproximado por diferentes métodos numéricos. Um método muito
+interessante foi proposto por Leibniz, filósofo e matemático famoso que
+é considerado, junto de Newton, como o pai do cálculo. Ambos são
+contemporâneos, mas nunca trabalharam juntos e desenvolveram partes
+diferentes, sendo Leibniz o principal responsável pela notação
+moderna.</p>
+<p>Leibniz notou que a relação do
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
+com uma integral e, como toda integral, calcula a área sob uma curva
+somando partes infinitesimalmente pequenas.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mi>π</mi><mn>4</mn></mfrac><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup></mrow></mfrac><mspace width="0.167em"></mspace><mi>d</mi><mi>x</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mi>∞</mi></msubsup><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>k</mi></msup><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{\pi}{4} = \int_{0}^{1} \frac{1}{1+x^2} \, dx = \sum_{k=0}^{\infty} \frac{(-1)^k}{2k+1}</annotation></semantics></math></p>
+<p>Desta forma, podemos calcular
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
+somando muitos termos desse somatório. O somatório acima foi
+primeiramente descoberto pelo matemático indiano Madhava de
+Sangamagrama, entre o século 14 e 15. Posteriormente, ela foi
+independentemente descoberta por James Gregory (1671) e Leibniz (1673).
+Gregory, que também é muito importante para o desenvolvimento do
+Cálculo, e por isso essa série é chamada de Gregory-Leibniz na cultura
+ocidental. A partir deste somatório, geramos a seguinte série
+infinita:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mi>π</mi><mn>4</mn></mfrac><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>−</mo><mfrac><mn>1</mn><mn>7</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>9</mn></mfrac><mi>.</mi><mi>.</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} ...</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>=</mo><mn>4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>−</mo><mfrac><mn>1</mn><mn>7</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>9</mn></mfrac><mi>.</mi><mi>.</mi><mi>.</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\pi = 4 (1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} ...)</annotation></semantics></math></p>
+<p>Neste exercício, iremos calcular o valor de pi com a série acima,
+recebendo como entrada o número de termos a serem utilizados. No
+entanto, podemos utilizar muitos termos e, obrigatoriamente, devemos
+usar o paralelismo. Você deverá desenvolver um programa utilizando
+OpenMP para calcular uma aproximação de
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>,
+de forma paralela, distribuindo o trabalho entre múltiplas threads.</p>
+<h2 id="E-entrada">Entrada</h2>
+<p>A entrada possui o número
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+de frações que devemos utilizar
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>≤</mo><mi>N</mi><mo>≤</mo><msup><mn>2</mn><mn>11</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2 \leq N \leq 2^11)</annotation></semantics></math>.</p>
+<h2 id="E-saída">Saída</h2>
+<p>A saída deve possuir o número de aproximado de
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>,
+com 11 casas decimais.</p>
+<h2 id="E-restrições">Restrições</h2>
+<ul>
+<li>A quantidade de frações somadas pode ser superior a 2 bilhões. Use
+inteiros de 64 bits.</li>
+<li>Para os valores com frações, utilize variáveis de precisão
+dupla.</li>
+<li>Seu programa deve usar OpenMP para resolver em tempo hábil.</li>
+<li>Para garantir a compatibilidade de operações de ponto flutuante com
+precisão próxima, realize a multiplicação por 4 da equação acima apenas
+<strong>depois</strong> de realizar todas as operações de soma.</li>
+</ul>
+<section class="moj-exemplos"><h2>Exemplos</h2><div class="moj-exemplo"><h3 class="sample-head">Entrada<button type="button" class="sample-copy" aria-label="Copiar a entrada do exemplo 1 do problema E">Copiar</button></h3><pre data-sample="sample1" data-kind="input">85
+</pre><h3 class="sample-head">Saída<button type="button" class="sample-copy" aria-label="Copiar a saída do exemplo 1 do problema E">Copiar</button></h3><pre data-sample="sample1" data-kind="output">3.15335695246
+</pre></div></section>
+
+</div>
+</article>
+</main>
+<footer class="site-foot wrap">Enunciados do contest “[PSPD 2026.02-T01] OMP” do MOJ.</footer>
+<script>
+(() => {
+  const TITLES = {"A":"Sudoku Paralelo","B":"Multiplicação de Matrizes em Paralelo","C":"Cálculo Paralelo de PI usando OpenMP","D":"Parallel Prime Sum","E":"Cálculo Paralelo de PI usando OpenMP e o método de Gregory-Leibniz"};
+  const LETTERS = Object.keys(TITLES);
+  const problems = [...document.querySelectorAll('.problem')];
+  const radios = [...document.querySelectorAll('input[name="filtro"]')];
+  const status = document.getElementById('filter-status');
+  const bar = document.querySelector('.filter-bar');
+  const main = document.querySelector('main');
+  const baseTitle = document.title;
+
+  function fromHash() {
+    const h = decodeURIComponent(location.hash.slice(1)).trim().toUpperCase();
+    return LETTERS.includes(h) ? h : 'todos';
+  }
+
+  function apply(value, opts = {}) {
+    for (const p of problems) p.hidden = value !== 'todos' && p.dataset.letter !== value;
+    for (const r of radios) r.checked = r.value === value;
+    status.textContent = value === 'todos'
+      ? `Mostrando os ${problems.length} problemas`
+      : `Mostrando o problema ${value} — ${TITLES[value]}`;
+    document.title = value === 'todos' ? baseTitle : `${value} — ${TITLES[value]} · ${baseTitle}`;
+    if (opts.updateHash) {
+      const url = value === 'todos' ? location.pathname + location.search : '#' + value;
+      history.replaceState(null, '', url);
+    }
+    if (opts.scroll) {
+      const top = main.getBoundingClientRect().top + window.scrollY - bar.offsetHeight - 8;
+      if (window.scrollY > top) window.scrollTo({ top, behavior: 'auto' });
+    }
+  }
+
+  for (const r of radios) r.addEventListener('change', () => apply(r.value, { updateHash: true, scroll: true }));
+  window.addEventListener('hashchange', () => apply(fromHash(), { scroll: true }));
+  apply(fromHash());
+
+  // borda na barra fixa quando ela "gruda" no topo
+  const sentinel = document.getElementById('bar-sentinel');
+  if ('IntersectionObserver' in window && sentinel) {
+    new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting)).observe(sentinel);
+  }
+
+  // botões Copiar
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (_) { /* tenta o fallback */ }
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+    ta.remove();
+    return ok;
+  }
+
+  document.addEventListener('click', async (ev) => {
+    const btn = ev.target.closest('.sample-copy');
+    if (!btn) return;
+    const pre = btn.closest('.sample-head')?.nextElementSibling;
+    if (!pre || pre.tagName !== 'PRE') return;
+    const ok = await copyText(pre.textContent);
+    btn.textContent = ok ? 'Copiado!' : 'Não copiou';
+    btn.classList.toggle('ok', ok);
+    btn.classList.toggle('fail', !ok);
+    clearTimeout(btn._reset);
+    btn._reset = setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('ok', 'fail'); }, 1600);
+  });
+})();
+</script>
+</body>
+</html>
